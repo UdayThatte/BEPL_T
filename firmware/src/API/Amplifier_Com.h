@@ -170,6 +170,10 @@ bool Set_Homing_Method_To_NORUN(uint8_t AmplNode);
 //May be ion case StartBoard or Port side it will be required.
 AmplComm_Status Set_Polarity_Of_Rotation(uint8_t AmplNode,bool IsReverse);
 
+//Resets the fault status
+//calling routine must check if the fault is reset by again checking the fault register
+AmplComm_Status Reset_Fault(uint8_t AmplNode);
+
 #ifdef	__cplusplus
 }
 #endif

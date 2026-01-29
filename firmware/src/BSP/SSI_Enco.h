@@ -17,7 +17,7 @@ extern "C" {
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
 
-#define PlsDly 10 //each count 125uS
+#define PlsDly 15 //each count 125uS
 #define ST_Enc_NoofBits_ToRead_Bin 12
 #define ST_Enc_NoofBits_ToRead_Gray 13 //for Single turn gray 13 
 #define MT_Enc_NoofBits_ToRead 25 //for MultiTurn 25 bits Not yet tested for Multi Turn   

@@ -432,3 +432,25 @@ AmplComm_Status Set_Polarity_Of_Rotation(uint8_t AmplNode,bool IsReverse)
     AmplStatus = AMPL_STATE_OK;
     return AmplStatus;
 }
+
+
+AmplComm_Status Reset_Fault(uint8_t AmplNode)
+{
+ uint32_t Ctlwrd;
+ bool ret;
+ 
+    ret = Read_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&Ctlwrd);
+     if(!ret) return AMPL_CAN_COMM_ERR; //if comm error //return in communication 
+
+    Ctlwrd &= ~Amp_FAULT_BIT_Mask;
+    if(! Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_SHUT_DOWN,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+        return AMPL_CAN_COMM_ERR;
+    
+    delay_mS(10);
+    
+    Ctlwrd |= ~Amp_FAULT_BIT_Mask;
+    if(! Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_SHUT_DOWN,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+        return AMPL_CAN_COMM_ERR;
+    
+    return AmplStatus;
+}

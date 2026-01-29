@@ -82,20 +82,29 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode)
 }
 
 
-void Get_and_Display_Ampl_Error(uint8_t AmplNode)
+uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString)
 {
     uint32_t ErrCode;
     if(!Get_Amp_Error_if_Any(AmplNode,&ErrCode))
     {
         printf("\nCould Not Get Error Code CAN Err- %d",CAN_state);
-        return;
+        ErrCode = 0xffff;
+        return ErrCode;
     }
-    
-    DisplayAmplifier_Error(AmplNode,ErrCode);
-   
+    if(ErrCode)
+        DisplayAmplifier_Error(AmplNode,ErrCode,ErrorString);
+       
+    else
+    {
+        printf("\rNo Error of Amplifier");
+        strcpy(ErrorString,"No Errors Found.");
+        
+    }
+        
+   return ErrCode;     
 }
 
-void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode)
+void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode,char* ErrorString)
 {
     char Prefix[48],ErrorDescr[32];
     
@@ -142,6 +151,7 @@ void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode)
     strcat(Prefix,ErrorDescr);
     printf(Prefix);
     //send it to display also
+    strcpy(ErrorString,ErrorDescr);
     
 }
 

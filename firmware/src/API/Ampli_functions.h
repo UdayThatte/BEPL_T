@@ -56,11 +56,14 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode);
 
 //This would read the latest Error from Amplifier and Display the same 
 //in user understandable strings, will also send it to Debug Port
-void Get_and_Display_Ampl_Error(uint8_t AmplNode);
+//The error code is returned
+//0 - No error
+//0xffff - No error code can be read )
+uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString);
 
 //When Passed the Error code received from Amplifier this will
 //Display the same in user understandable strings, will also send it to Debug Port
-void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode);
+void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode,char* ErrorString);
 
 //Current Position of Motor is treated as HOME
 ///returns false if failed
