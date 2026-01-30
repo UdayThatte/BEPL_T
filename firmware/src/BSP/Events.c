@@ -1,6 +1,6 @@
 
 #include "Events.h"
-#include "Port_Definitions.h"
+#include "System_Configuration.h"
 #include "CAN_Comm.h"
 #include "I2C_Comm.h"
 #include "Protocol.h"
@@ -34,6 +34,14 @@ extern volatile uint8_t PNDNT_ByteRcvTimeOutCntr;
 extern volatile bool I2CXferDone;
 extern Protocol_Info ETH_Proto_Ptrs;
 extern Protocol_Info PNDNT_Proto_Ptrs;
+
+extern volatile bool InputReadEnable;
+extern volatile uint8_t OUT_IMG;
+extern volatile uint8_t BRK_IMG;
+extern volatile uint16_t INP_IMG;
+
+extern volatile int ETH_fb_Cntr;
+extern volatile bool Start_ETH_fb ;
 
 void I2C2_I2cXferDone(uintptr_t context )
 {
@@ -145,6 +153,16 @@ void Intr1Msec(uint32_t status, uintptr_t context)
         if(!PNDNT_ByteRcvTimeOutCntr) //if timeout has occured
             Protocol_Frame_done(&PNDNT_Proto_Ptrs);
     }    
+    
+    ETH_fb_Cntr++;
+    
+    if(ETH_fb_Cntr >= ETH_Fb_Time_mSec)
+    {
+        ETH_fb_Cntr = 0;
+        if(Start_ETH_fb)
+            Send_Response_ETH();
+    }    
+    
     if(Dlycnt) Dlycnt--;//used by Delay routine
     if(TmOut) TmOut--; //used fro many routine
     NoKeyTimeOut++;
@@ -156,8 +174,26 @@ void Intr1Msec(uint32_t status, uintptr_t context)
         Count10mSec++;
         if(KeyBoardEnable)
             KbdProcessInTimer();
+        
+           //Update Outputs/Inputs Every 10mSec
+            GPIO_PortWrite(GPIO_PORT_G, 0xF000,(uint32_t)OUT_IMG << 8 );//OUT7,6,5,4
+            GPIO_PortWrite(GPIO_PORT_G, 0x0003,(uint32_t)OUT_IMG ); //OUT1,OUT0
+            GPIO_PortWrite(GPIO_PORT_A,0x0002,(uint32_t)OUT_IMG >> 1 );//OUT2 RA1
+            GPIO_PortWrite(GPIO_PORT_A,0x4000,(uint32_t)OUT_IMG << 11 );//OUT3 RA14
+
+            GPIO_PortWrite(GPIO_PORT_C, 0x000E,(uint32_t)BRK_IMG << 1 );//RC1..3 is BRK1..3
+            if(InputReadEnable)
+            {
+                 EN_IN_HI_Clear();
+                 INP_IMG = GPIO_PortRead(GPIO_PORT_D)<<7;                    //RD8..RD1 DB7..DB0
+                 EN_IN_HI_Set();
+                 EN_IN_LO_Clear();
+                 INP_IMG = (INP_IMG & 0xff00)| ((uint16_t)(GPIO_PortRead(GPIO_PORT_D)>>1)&0xff);
+                 EN_IN_LO_Set();       
+            }
+            
         UserTimer10mSec();
-    }
+    }//10 msec loop
     
     Countfor1Sec++;
     if(Countfor1Sec>=1000) 

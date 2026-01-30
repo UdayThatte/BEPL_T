@@ -3,11 +3,51 @@
 #include "CAN_Enco_Com.h"
 #include "Utils.h"
 #include "Para_Calculations.h"
+#include "System_Configuration.h"
 
 extern uint16_t AmplStatus; 
 extern volatile CAN_APP_STATES CAN_state;
 
-bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode)
+bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode,Ampl_Paras* Paras)
+{
+  uint32_t send_cnt;
+  AmplComm_Status stat = Enable_Amplifier(AmplNode);
+ 
+    if(stat != AMPL_STATE_OK) 
+        return false;
+  //printf("\rAmp Enabled in Init_Amplifier()");
+  stat = Set_Operating_Mode(AmplNode,mode);
+      if(stat != AMPL_STATE_OK) 
+        return false;
+  //printf("\rOp Mode Set in Init_Amplifier()");
+  
+    if(Paras->motor_rotation_direction == 1)
+    {
+          stat = Set_Polarity_Of_Rotation(AmplNode,NORMAL_POLARITY);
+      if(stat != AMPL_STATE_OK) 
+          return false;  
+
+    }
+    else
+    {
+           stat = Set_Polarity_Of_Rotation(AmplNode,REVERSE_POLARITY);
+         if(stat != AMPL_STATE_OK) 
+           return false;  
+    }
+        send_cnt= Get_AZ_Count_Velocity(Paras->default_Velocity);
+        stat = Set_Target_Velocity_Count(AmplNode,send_cnt);
+          if(stat != AMPL_STATE_OK) 
+            return false;
+
+        send_cnt=Get_AZ_Count_Accl_Deccl(Paras->default_Velocity);
+        stat = Set_Target_Acceleration_Count(AmplNode,send_cnt);
+              if(stat != AMPL_STATE_OK) 
+                    return false;
+
+  return true;
+}
+
+bool Init_Amplifier_old(uint8_t AmplNode,AmplOprMode mode)
 {
   uint32_t send_cnt;
   AmplComm_Status stat = Enable_Amplifier(AmplNode);
@@ -22,7 +62,7 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode)
   
   switch (AmplNode)
   {
-      case AZ_Amplifier:
+      case CAN_Node_Amp0:
             //TODO calculations for the velocity to be performed here
               if(AZ_motor_rotation_direction==1)
               {
@@ -48,7 +88,7 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode)
                           return false;
 
           break;
-      case EL_Amplifier:
+      case CAN_Node_Amp1:
                     if(EL_motor_rotation_direction==1)
                     {
                       stat = Set_Polarity_Of_Rotation(AmplNode,NORMAL_POLARITY);
@@ -73,6 +113,10 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode)
                               if(stat != AMPL_STATE_OK) 
                                 return false;
           break;
+          
+      case CAN_Node_Amp2:
+          
+          break;
   }
    
   if(stat != AMPL_STATE_OK) 
@@ -82,7 +126,7 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode)
 }
 
 
-uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString)
+uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString,char* AmplName)
 {
     uint32_t ErrCode;
     if(!Get_Amp_Error_if_Any(AmplNode,&ErrCode))
@@ -92,7 +136,7 @@ uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString)
         return ErrCode;
     }
     if(ErrCode)
-        DisplayAmplifier_Error(AmplNode,ErrCode,ErrorString);
+        DisplayAmplifier_Error(AmplNode,ErrCode,ErrorString,AmplName);
        
     else
     {
@@ -104,12 +148,12 @@ uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString)
    return ErrCode;     
 }
 
-void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode,char* ErrorString)
+void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode,char* ErrorString,char* AmplName)
 {
     char Prefix[48],ErrorDescr[32];
     
-    strcpy(Prefix,"\rAZ Ampl.");
-    if(AmplNode == EL_Amplifier) strcpy(Prefix,"\rEL Ampl.");
+    strcpy(Prefix,"\r");
+    strcpy(Prefix,AmplName);
     
     switch(ErrCode)
     {

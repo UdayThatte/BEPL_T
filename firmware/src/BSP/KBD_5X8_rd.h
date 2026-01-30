@@ -10,7 +10,7 @@
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include <stdio.h>
 #include "definitions.h"                // SYS function prototypes
-#include "Port_Definitions.h"
+#include "System_Configuration.h"
 
 void KbdProcessInTimer();
 

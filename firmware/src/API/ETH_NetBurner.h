@@ -10,10 +10,10 @@ extern "C" {
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include <stdio.h>
 #include "definitions.h"                // SYS function prototypes
-#include "Port_Definitions.h"
+#include "System_Configuration.h"
 #include "Sys_Inits.h"
 
-#include "HW_Testing.h"
+//#include "HW_Testing.h"
 #include "Beeps.h"
 #include "Events.h"
 

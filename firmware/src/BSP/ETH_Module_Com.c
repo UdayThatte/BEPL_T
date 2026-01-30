@@ -1,6 +1,6 @@
 
 #include "ETH_Module_Com.h"
-#include "Port_Definitions.h"
+#include "System_Configuration.h"
 #include "Utils.h"
 
 extern volatile int TmOut;

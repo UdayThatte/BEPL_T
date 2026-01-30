@@ -18,17 +18,22 @@ extern "C" {
 
 #include "Amplifier_Com.h"    
 #include "CAN_Comm.h"    
-
+#include "System_Configuration.h"
     
+typedef struct
+{
+    uint8_t motor_rotation_direction;
+    double GR_motor_to_load;
+    double Max_Positive;
+    double Max_Negative;
+    uint32_t AmplCountForOneRot;
+    double Max_Velocity;    //deg/sec 
+    double default_Velocity;
+    double default_acc; //deg/sec2
+}Ampl_Paras;
 
-//define the Amplifier nodes here (Offset)
-//for This system one more node CAN_Node_Amp2 is spare (not used)    
-//For all routines This constant is to be used    
-#define     AZ_Amplifier     CAN_Node_Amp0
-#define     EL_Amplifier     CAN_Node_Amp1
 
   
-
 //Error codes
 #define POWER_BREAKDOWN				0x3285
 #define OVER_TEMP_GENERAL           0x4200
@@ -42,12 +47,14 @@ extern "C" {
 #define LIMIT_SW_ERROR				0x8A84
 
 
+
 //returns true-Success false-failed
 //in case of failure CAN_state or AmplStatus contains the Error code
 //mode- is required mode of operation 
 //In case of Position mode,   Default Velocity and acceleration as defined here would be used
 //for proper conversion GR (Gear Ration ) is used     
-bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode);
+bool Init_Amplifier_old(uint8_t AmplNode,AmplOprMode mode);
+bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode,Ampl_Paras* Paras);
 
 //returns true when Motion is complete
 //returns false - if failed due to CAN comm ot Ampl Error response
@@ -59,11 +66,11 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode);
 //The error code is returned
 //0 - No error
 //0xffff - No error code can be read )
-uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString);
+uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString,char* AmplName);
 
 //When Passed the Error code received from Amplifier this will
 //Display the same in user understandable strings, will also send it to Debug Port
-void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode,char* ErrorString);
+void DisplayAmplifier_Error(uint8_t AmplNode,uint32_t ErrCode,char* ErrorString,char* AmplName);
 
 //Current Position of Motor is treated as HOME
 ///returns false if failed

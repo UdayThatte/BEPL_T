@@ -6,20 +6,20 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 99DB74296DF9943C474F4F03A700C790
-- generatedChecksum: A67D990B145533FDE4B99359C0986DF3
+- generatedChecksum: B7828D586D056221C2FA02791AE1C32F
   logicalPath: config/default
   name: initialization.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: A67D990B145533FDE4B99359C0986DF3
-- generatedChecksum: CE4B5F3DB64C3D6935D6C377783B137D
+  userChecksum: B7828D586D056221C2FA02791AE1C32F
+- generatedChecksum: ACF3AA0987689CD83A865B6F6E73CDAA
   logicalPath: config/default
   name: interrupts.c
   physicalPath: ''
   security: NON_SECURE
   type: SOURCE
-  userChecksum: CE4B5F3DB64C3D6935D6C377783B137D
+  userChecksum: ACF3AA0987689CD83A865B6F6E73CDAA
 - generatedChecksum: null
   logicalPath: ''
   name: main.c
@@ -27,13 +27,20 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: null
-- generatedChecksum: 034D728CE681C6166819091E7D362526
+- generatedChecksum: FB038C6D05824749510CA5760073B7FF
+  logicalPath: config/default/peripheral/adc
+  name: plib_adc.c
+  physicalPath: peripheral/adc
+  security: NON_SECURE
+  type: SOURCE
+  userChecksum: FB038C6D05824749510CA5760073B7FF
+- generatedChecksum: 261D3FE42899D7C590B63903950A5275
   logicalPath: config/default/peripheral/can
   name: plib_can1.c
   physicalPath: peripheral/can
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 034D728CE681C6166819091E7D362526
+  userChecksum: 261D3FE42899D7C590B63903950A5275
 - generatedChecksum: 2F8D2F5AE2544E2AAB9FD3A1345E08B8
   logicalPath: config/default/peripheral/clk
   name: plib_clk.c
@@ -48,13 +55,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: CDE489012C46160ED6A67092B2FFCE99
-- generatedChecksum: 05CD4FBEE1216DD7CA8365AA2FB7F440
+- generatedChecksum: 86FD86542E0DA780A26C6D636E1A59DB
   logicalPath: config/default/peripheral/evic
   name: plib_evic.c
   physicalPath: peripheral/evic
   security: NON_SECURE
   type: SOURCE
-  userChecksum: 05CD4FBEE1216DD7CA8365AA2FB7F440
+  userChecksum: 86FD86542E0DA780A26C6D636E1A59DB
 - generatedChecksum: B982727A932B0F1910D02E23335116CF
   logicalPath: config/default/peripheral/gpio
   name: plib_gpio.c
@@ -104,13 +111,13 @@ files:
   security: NON_SECURE
   type: SOURCE
   userChecksum: 198BF3A3ED6F63C352A79899A014A59D
-- generatedChecksum: 136DC4D487DB0C98AF17741E5545E842
+- generatedChecksum: 43B2AB18A5DFFD6669A13361640721EF
   logicalPath: config/default
   name: definitions.h
   physicalPath: ''
   security: NON_SECURE
   type: HEADER
-  userChecksum: 136DC4D487DB0C98AF17741E5545E842
+  userChecksum: 43B2AB18A5DFFD6669A13361640721EF
 - generatedChecksum: E189C26B2269F8DE46033CCD0621958D
   logicalPath: config/default
   name: device.h
@@ -125,6 +132,13 @@ files:
   security: NON_SECURE
   type: HEADER
   userChecksum: 4CF4A86296482D5331331BA301C20BB2
+- generatedChecksum: E8917BB734DC71DCEBD331F58F060D11
+  logicalPath: config/default/peripheral/adc
+  name: plib_adc.h
+  physicalPath: peripheral/adc
+  security: NON_SECURE
+  type: HEADER
+  userChecksum: E8917BB734DC71DCEBD331F58F060D11
 - generatedChecksum: DBEAE2255E15E7D4FB65D669EFCA5870
   logicalPath: config/default/peripheral/can
   name: plib_can1.h

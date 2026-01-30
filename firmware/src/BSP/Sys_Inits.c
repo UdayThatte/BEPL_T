@@ -1,5 +1,5 @@
 #include "Sys_Inits.h"
-#include "Port_Definitions.h"
+#include "System_Configuration.h"
 #include "Events.h"
 #include "BoardTemp.h"
 #include "RTC_Comm.h"

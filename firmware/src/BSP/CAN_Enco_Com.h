@@ -19,8 +19,6 @@ extern "C" {
 #include "definitions.h"                // SYS function prototypes
 
 
-#define  AZ_Encode_Node CAN_Node_Encoder0
-#define  EL_Encode_Node CAN_Node_Encoder1
 
     //various Data Objects
 #define CURRENT_POSITION    0x2000

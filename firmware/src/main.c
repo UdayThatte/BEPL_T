@@ -32,10 +32,13 @@
 #include "Port_Definitions.h"
 #include "CAN_Comm.h"
 #include "ETH_Module_Com.h"
+#include "Amplifier_Com.h"
 #include "Ampli_functions.h"
 #include "CAN_Enco_Com.h"
 #include "Protocol.h"
 #include "Ampli_functions.h"
+#include "Para_Calculations.h"
+#include "System_Configuration.h"
 // *****************************************************************************
 // *****************************************************************************
 // Section: Main Entry Point
@@ -225,7 +228,7 @@ void Test_Positioning(uint8_t AmplNode)
 
 void Check_Amplifier()
 {
-    Init_Amplifier(AZ_Amplifier,Ampl_POSITION_Mode);
+    Init_Amplifier_old(AZ_Amplifier,Ampl_POSITION_Mode);
     Test_Positioning(AZ_Amplifier);
 }
 

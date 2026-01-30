@@ -57,20 +57,20 @@
 // *****************************************************************************
 // *****************************************************************************
 /* Number of configured FIFO */
-#define CAN_NUM_OF_FIFO             9
+#define CAN_NUM_OF_FIFO             13
 /* Maximum number of CAN Message buffers in each FIFO */
 #define CAN_FIFO_MESSAGE_BUFFER_MAX 32
 
 #define CAN_CONFIGURATION_MODE      0x4
 #define CAN_OPERATION_MODE          0x0
-#define CAN_NUM_OF_FILTER           9
+#define CAN_NUM_OF_FILTER           12
 /* FIFO Offset in word (4 bytes) */
 #define CAN_FIFO_OFFSET             0x10
 /* Filter Offset in word (4 bytes) */
 #define CAN_FILTER_OFFSET           0x4
 /* Acceptance Mask Offset in word (4 bytes) */
 #define CAN_ACCEPTANCE_MASK_OFFSET  0x4
-#define CAN_MESSAGE_RAM_CONFIG_SIZE 64
+#define CAN_MESSAGE_RAM_CONFIG_SIZE 80
 #define CAN_MSG_IDE_MASK            0x10000000
 #define CAN_MSG_SID_MASK            0x7FF
 #define CAN_MSG_TIMESTAMP_MASK      0xFFFF0000
@@ -137,6 +137,10 @@ void CAN1_Initialize(void)
     C1FIFOCON6 = (((8 - 1) << _C1FIFOCON6_FSIZE_POSITION) & _C1FIFOCON6_FSIZE_MASK);
     C1FIFOCON7 = (((4 - 1) << _C1FIFOCON7_FSIZE_POSITION) & _C1FIFOCON7_FSIZE_MASK) | _C1FIFOCON7_TXEN_MASK | ((0x0 << _C1FIFOCON7_TXPRI_POSITION) & _C1FIFOCON7_TXPRI_MASK) | ((0x1 << _C1FIFOCON7_RTREN_POSITION) & _C1FIFOCON7_RTREN_MASK);
     C1FIFOCON8 = (((4 - 1) << _C1FIFOCON8_FSIZE_POSITION) & _C1FIFOCON8_FSIZE_MASK);
+    C1FIFOCON9 = (((4 - 1) << _C1FIFOCON9_FSIZE_POSITION) & _C1FIFOCON9_FSIZE_MASK);
+    C1FIFOCON10 = (((4 - 1) << _C1FIFOCON10_FSIZE_POSITION) & _C1FIFOCON10_FSIZE_MASK);
+    C1FIFOCON11 = (((4 - 1) << _C1FIFOCON11_FSIZE_POSITION) & _C1FIFOCON11_FSIZE_MASK);
+    C1FIFOCON12 = (((4 - 1) << _C1FIFOCON12_FSIZE_POSITION) & _C1FIFOCON12_FSIZE_MASK);
 
     /* Configure CAN Filters */
     C1RXF0 = (1409 & CAN_MSG_SID_MASK) << _C1RXF0_SID_POSITION;
@@ -158,14 +162,23 @@ void CAN1_Initialize(void)
     C1FLTCON1SET = ((0x6 << _C1FLTCON1_FSEL5_POSITION) & _C1FLTCON1_FSEL5_MASK)
                                                          | ((0x0 << _C1FLTCON1_MSEL5_POSITION) & _C1FLTCON1_MSEL5_MASK)| _C1FLTCON1_FLTEN5_MASK;
     C1RXF6 = (1793 & CAN_MSG_SID_MASK) << _C1RXF6_SID_POSITION;
-    C1FLTCON1SET = ((0x8 << _C1FLTCON1_FSEL6_POSITION) & _C1FLTCON1_FSEL6_MASK)
+    C1FLTCON1SET = ((0x7 << _C1FLTCON1_FSEL6_POSITION) & _C1FLTCON1_FSEL6_MASK)
                                                          | ((0x1 << _C1FLTCON1_MSEL6_POSITION) & _C1FLTCON1_MSEL6_MASK)| _C1FLTCON1_FLTEN6_MASK;
     C1RXF7 = (1794 & CAN_MSG_SID_MASK) << _C1RXF7_SID_POSITION;
-    C1FLTCON1SET = ((0x9 << _C1FLTCON1_FSEL7_POSITION) & _C1FLTCON1_FSEL7_MASK)
+    C1FLTCON1SET = ((0x8 << _C1FLTCON1_FSEL7_POSITION) & _C1FLTCON1_FSEL7_MASK)
                                                          | ((0x1 << _C1FLTCON1_MSEL7_POSITION) & _C1FLTCON1_MSEL7_MASK)| _C1FLTCON1_FLTEN7_MASK;
     C1RXF8 = (1795 & CAN_MSG_SID_MASK) << _C1RXF8_SID_POSITION;
-    C1FLTCON2SET = ((0xa << _C1FLTCON2_FSEL8_POSITION) & _C1FLTCON2_FSEL8_MASK)
+    C1FLTCON2SET = ((0x9 << _C1FLTCON2_FSEL8_POSITION) & _C1FLTCON2_FSEL8_MASK)
                                                          | ((0x1 << _C1FLTCON2_MSEL8_POSITION) & _C1FLTCON2_MSEL8_MASK)| _C1FLTCON2_FLTEN8_MASK;
+    C1RXF9 = (1803 & CAN_MSG_SID_MASK) << _C1RXF9_SID_POSITION;
+    C1FLTCON2SET = ((0xa << _C1FLTCON2_FSEL9_POSITION) & _C1FLTCON2_FSEL9_MASK)
+                                                         | ((0x0 << _C1FLTCON2_MSEL9_POSITION) & _C1FLTCON2_MSEL9_MASK)| _C1FLTCON2_FLTEN9_MASK;
+    C1RXF10 = (1804 & CAN_MSG_SID_MASK) << _C1RXF10_SID_POSITION;
+    C1FLTCON2SET = ((0xb << _C1FLTCON2_FSEL10_POSITION) & _C1FLTCON2_FSEL10_MASK)
+                                                         | ((0x0 << _C1FLTCON2_MSEL10_POSITION) & _C1FLTCON2_MSEL10_MASK)| _C1FLTCON2_FLTEN10_MASK;
+    C1RXF11 = (1805 & CAN_MSG_SID_MASK) << _C1RXF11_SID_POSITION;
+    C1FLTCON2SET = ((0xc << _C1FLTCON2_FSEL11_POSITION) & _C1FLTCON2_FSEL11_MASK)
+                                                         | ((0x0 << _C1FLTCON2_MSEL11_POSITION) & _C1FLTCON2_MSEL11_MASK)| _C1FLTCON2_FLTEN11_MASK;
 
     /* Configure CAN Acceptance Filter Masks */
     C1RXM0 = (1423 & CAN_MSG_SID_MASK) << _C1RXM0_SID_POSITION;
