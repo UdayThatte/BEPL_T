@@ -8,6 +8,7 @@
 
 
 
+
 extern uint16_t ADC_Spr1,ADC_Spr2;
 extern volatile  bool ADC_result_ready;
 
@@ -38,11 +39,20 @@ extern Protocol_Info PNDNT_Proto_Ptrs;
 extern volatile bool InputReadEnable;
 extern volatile uint8_t OUT_IMG;
 extern volatile uint8_t BRK_IMG;
+extern volatile uint8_t TINP_IMG1;
+extern volatile uint16_t TINP_IMG;
 extern volatile uint16_t INP_IMG;
-
+extern volatile uint8_t INP_IMG1; 
+extern bool System_Booted;
 extern volatile int ETH_fb_Cntr;
 extern volatile bool Start_ETH_fb ;
 
+
+
+extern volatile uint16_t lastStableState_INPIMG;
+extern volatile uint8_t lastStableState_INPIMG1;
+extern volatile uint8_t  debounceCount_INPIMG[]; // Counter per pin
+extern volatile uint8_t  debounceCount_INPIMG1[];
 void I2C2_I2cXferDone(uintptr_t context )
 {
     
@@ -137,6 +147,64 @@ void ETH_Port0_OnBlockSent( uintptr_t context)
     XmtETHProgress = false;
 }
 
+const uint8_t DEBOUNCE_THRESHOLD_INPIMG = 4;     // 4 * 10ms = 30ms
+const uint8_t DEBOUNCE_THRESHOLD_INPIMG1 = 4;
+
+void Debounce_INPIMG()
+{
+    for (int i = 0; i < 16; i++) 
+    {
+        uint16_t pinMask = (1 << i);
+        uint8_t currentPinBit = (TINP_IMG & pinMask) ? 1 : 0;
+        uint8_t stablePinBit  = (lastStableState_INPIMG & pinMask) ? 1 : 0;
+
+        if (currentPinBit != stablePinBit) 
+        {
+            debounceCount_INPIMG[i]++;
+            if (debounceCount_INPIMG[i] >= DEBOUNCE_THRESHOLD_INPIMG) 
+            {
+                // Pin has stabilized to new value
+                if (currentPinBit) 
+                    lastStableState_INPIMG |= pinMask;
+                else 
+                    lastStableState_INPIMG &= ~pinMask;
+                
+                debounceCount_INPIMG[i] = 0;
+            }
+        } 
+        else 
+            debounceCount_INPIMG[i] = 0; // Reset count if signal reverts
+    }
+    INP_IMG = lastStableState_INPIMG;
+}
+void Debounce_INPIMG1()
+{
+    for (int i = 0; i < 8; i++) 
+    {
+        uint8_t pinMask = (1 << i);
+        uint8_t currentPinBit = (TINP_IMG1 & pinMask) ? 1 : 0;
+        uint8_t stablePinBit  = (lastStableState_INPIMG1 & pinMask) ? 1 : 0;
+
+        if (currentPinBit != stablePinBit) 
+        {
+            debounceCount_INPIMG1[i]++;
+            if (debounceCount_INPIMG1[i] >= DEBOUNCE_THRESHOLD_INPIMG1) 
+            {
+                // Pin has stabilized to new value
+                if (currentPinBit) 
+                    lastStableState_INPIMG1 |= pinMask;
+                else 
+                    lastStableState_INPIMG1 &= ~pinMask;
+                
+                debounceCount_INPIMG1[i] = 0;
+            }
+        } 
+        else 
+            debounceCount_INPIMG1[i] = 0; // Reset count if signal reverts
+    }
+    INP_IMG1 = lastStableState_INPIMG1;
+}
+
 
 void Intr1Msec(uint32_t status, uintptr_t context)
 {
@@ -174,25 +242,32 @@ void Intr1Msec(uint32_t status, uintptr_t context)
         Count10mSec++;
         if(KeyBoardEnable)
             KbdProcessInTimer();
-        
-           //Update Outputs/Inputs Every 10mSec
-            GPIO_PortWrite(GPIO_PORT_G, 0xF000,(uint32_t)OUT_IMG << 8 );//OUT7,6,5,4
-            GPIO_PortWrite(GPIO_PORT_G, 0x0003,(uint32_t)OUT_IMG ); //OUT1,OUT0
-            GPIO_PortWrite(GPIO_PORT_A,0x0002,(uint32_t)OUT_IMG >> 1 );//OUT2 RA1
-            GPIO_PortWrite(GPIO_PORT_A,0x4000,(uint32_t)OUT_IMG << 11 );//OUT3 RA14
+        if(System_Booted)   
+        {
+              //Update Outputs/Inputs Every 10mSec
+               GPIO_PortWrite(GPIO_PORT_G, 0xF000,(uint32_t)OUT_IMG << 8 );//OUT7,6,5,4
+               GPIO_PortWrite(GPIO_PORT_G, 0x0003,(uint32_t)OUT_IMG ); //OUT1,OUT0
+               GPIO_PortWrite(GPIO_PORT_A,0x0002,(uint32_t)OUT_IMG >> 1 );//OUT2 RA1
+               GPIO_PortWrite(GPIO_PORT_A,0x4000,(uint32_t)OUT_IMG << 11 );//OUT3 RA14
 
-            GPIO_PortWrite(GPIO_PORT_C, 0x000E,(uint32_t)BRK_IMG << 1 );//RC1..3 is BRK1..3
-            if(InputReadEnable)
-            {
-                 EN_IN_HI_Clear();
-                 INP_IMG = GPIO_PortRead(GPIO_PORT_D)<<7;                    //RD8..RD1 DB7..DB0
-                 EN_IN_HI_Set();
-                 EN_IN_LO_Clear();
-                 INP_IMG = (INP_IMG & 0xff00)| ((uint16_t)(GPIO_PortRead(GPIO_PORT_D)>>1)&0xff);
-                 EN_IN_LO_Set();       
-            }
-            
-        UserTimer10mSec();
+               GPIO_PortWrite(GPIO_PORT_C, 0x000E,(uint32_t)BRK_IMG << 1 );//RC1..3 is BRK1..3
+               if(InputReadEnable)
+               {
+                    EN_IN_HI_Clear();
+                    TINP_IMG = GPIO_PortRead(GPIO_PORT_D)<<7;                    //RD8..RD1 DB7..DB0
+                    EN_IN_HI_Set();
+                    EN_IN_LO_Clear();
+                    TINP_IMG = (TINP_IMG & 0xff00)| ((uint16_t)(GPIO_PortRead(GPIO_PORT_D)>>1)&0xff);
+                    EN_IN_LO_Set();       
+               }
+           Debounce_INPIMG();
+#if (Keybaord_Used == false)        
+           Debounce_INPIMG1();
+#endif
+
+        }//process inp output if booted
+        
+          UserTimer10mSec();
     }//10 msec loop
     
     Countfor1Sec++;

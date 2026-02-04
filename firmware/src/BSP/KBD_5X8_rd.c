@@ -10,7 +10,7 @@
 extern void CheckKey ();
 extern unsigned char KeyStatus [];
 extern void e_delay (uint32_t eDel);
-extern volatile uint8_t INP_IMG1; //for extended Inputs through RL lines
+extern volatile uint8_t TINP_IMG1; //for extended Inputs through RL lines
 
 void KbdProcessInTimer()
 {
@@ -22,7 +22,7 @@ void KbdProcessInTimer()
 	e_delay(1);
 #if (Only_4_Return_Lines == true)
     KeyStatus[0] = (~(unsigned char)(GPIO_PortRead(GPIO_PORT_D)>>1)) | 0xf0;
-    INP_IMG1 = (unsigned char)(GPIO_PortRead(GPIO_PORT_D)>>1) & 0xf0; //Extended inputs updated
+    TINP_IMG1 = (unsigned char)(GPIO_PortRead(GPIO_PORT_D)>>1) & 0xf0; //Extended inputs updated
 #else    
     KeyStatus[0] = (~(unsigned char)(GPIO_PortRead(GPIO_PORT_D)>>1));
 #endif    
@@ -78,7 +78,7 @@ void KbdProcessInTimer()
 #else    //keyabord is not used and all RL lines are used as inputs
     EN_RL_BUF_Clear();
     e_delay(1);
-    INP_IMG1 = (unsigned char)(GPIO_PortRead(GPIO_PORT_D)>>1);
+    TINP_IMG1 = (unsigned char)(GPIO_PortRead(GPIO_PORT_D)>>1);
     EN_RL_BUF_Set();
 #endif     
 }

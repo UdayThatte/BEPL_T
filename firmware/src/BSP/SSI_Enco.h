@@ -17,6 +17,8 @@ extern "C" {
 #include <stdlib.h>                     // Defines EXIT_FAILURE
 #include "definitions.h"                // SYS function prototypes
 
+#include "Para_Calculations.h"
+    
 #define PlsDly 15 //each count 125uS
 #define ST_Enc_NoofBits_ToRead_Bin 12
 #define ST_Enc_NoofBits_ToRead_Gray 13 //for Single turn gray 13 
@@ -47,6 +49,7 @@ uint32_t Get_SSI_Enco_Count_ST(uint8_t ChNo,bool IsitGrayCode);//ChNo 0,1,2
 uint32_t Get_SSI_Enco_Count_MT(uint8_t ChNo,bool IsitGrayCode);
 
 
+uint32_t Get_SSI_Encoder_Count(uint8_t ChNo,EncoderParas_t* Paras);
 void Reset_SSI_Enco(uint8_t ChNo);
 
 #ifdef	__cplusplus
