@@ -24,7 +24,7 @@ extern "C" {
 //Ampl Control Word Bit Commands
 //it2..0    
 #define Amp_SHUT_DOWN 0x06 //but voltage not disabled???
-#define Amp_QUICKSTOP 0x02    
+#define Amp_QUICKSTOP 0x02    //this frees the holding torqu
 #define Amp_DISABLE_VOLTAGE 0x0    
 #define Amp_SWITCH_ON 0x07
 #define Amp_ENABLE_OPERATION 0x0f
@@ -149,6 +149,10 @@ AmplComm_Status Set_Target_Deceleration_Count(uint8_t AmplNode,uint32_t Decl);
 //after first motion  is complete
 AmplComm_Status Issue_GO_Command(uint8_t AmplNode,bool ActImmediate);
 
+//Active Halt and waits for Target reached
+//Then resets the Halt bit
+AmplComm_Status Issue_Halt(uint8_t AmplNode);
+
 //activate Quick stop
 bool Issue_Quick_Stop(uint8_t AmplNode);
 
@@ -158,6 +162,9 @@ AmplComm_Status Check_if_Target_Reached(uint8_t AmplNode,bool* Reached);
 //Get actual speed of motor
 //used in Finding if motor is stopped completely in vel mode.
 AmplComm_Status Get_ActualSpeed_Count_of_Motor(uint8_t AmplNode,uint32_t* speed);
+
+//true if moving
+bool Is_Motor_Moving(uint8_t AmplNode);
 
 //Gives bit4 of Control word a rising edge to start homing
 AmplComm_Status Command_For_Homing(uint8_t AmplNode);

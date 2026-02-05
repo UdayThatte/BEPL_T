@@ -23,9 +23,17 @@ volatile uint32_t NoKeyTimeOut;
 volatile uint8_t RTC_Stat;
 
 volatile bool InputReadEnable;
-volatile uint16_t INP_IMG=0;
-volatile uint8_t INP_IMG1 =0; //for extended Inputs through RL lines when keyboard is not used RL7..Rl0
+volatile uint16_t TINP_IMG=0; //actual Inputs read
+volatile uint8_t TINP_IMG1=0; //Actual Inputs on RL lines read
+volatile uint16_t INP_IMG = 0;//debounced
+volatile uint8_t INP_IMG1  = 0; //debounced 
+//for extended Inputs through RL lines when keyboard is not used RL7..Rl0
                             //when 4 return lines are used only bit7..4 would be valid in this byte
+
+volatile uint16_t lastStableState_INPIMG;
+volatile uint8_t lastStableState_INPIMG1;
+volatile uint8_t  debounceCount_INPIMG[16] = {0}; // Counter per pin
+volatile uint8_t  debounceCount_INPIMG1[8]= {0};
 
 volatile uint8_t OUT_IMG=0;//Bit7 - OUT7 Bit0-OUT0 
 volatile uint8_t BRK_IMG =0;//Bit2..0 for Brake3..1

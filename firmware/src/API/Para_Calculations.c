@@ -120,6 +120,10 @@ uint32_t Get_EL_Count_Accl_Deccl(double Accl)
 }
 
 
+///////////////////////////////----------------------------------
+///////////////////////////////----------------------------------
+///////////////////////////////----------------------------------
+
 uint32_t Get_Pos_Count_ForAmp(double difftogo,Ampl_Paras* Paras)
 {
 int Sign=1;
@@ -143,11 +147,19 @@ int Sign=1;
     return retval;    
 }
 
-uint32_t Get_Vel_Count_ForAmp(double Velocity,Ampl_Paras* Paras)
+uint32_t Get_Vel_Count_ForAmp_degSec(double Velocity,Ampl_Paras* Paras)
 {
     if(Velocity > Paras->Max_Velocity) Velocity = Paras->Max_Velocity;
     
-    return (uint32_t)((Velocity * Paras->GR_motor_to_load)/6.0);//??
+    return (uint32_t)((Velocity * Paras->GR_motor_to_load)/6.0);//
+}
+
+
+uint32_t Get_Vel_Count_ForAmp_RPM(double Velocity,Ampl_Paras* Paras)
+{
+    if(Velocity > Paras->Max_Velocity) Velocity = Paras->Max_Velocity;
+    
+    return (uint32_t)((Velocity * Paras->GR_motor_to_load));//
 }
 
 
@@ -160,7 +172,7 @@ uint32_t Get_Accl_Deccl_Count_Foramp(double Accl,Ampl_Paras* Paras)
     
 }
 
-double Encoder_ComputeAbsTableAngle(uint32_t raw,EncoderValues_t* Paras)
+double Encoder_ComputeAbsLoadAngle(uint32_t raw,EncoderParas_t* Paras)
 {
     uint32_t revMask = (1UL << Paras->revBits) - 1;
     uint32_t angMask = (1UL << Paras->angBits) - 1;
@@ -182,6 +194,10 @@ double Encoder_ComputeAbsTableAngle(uint32_t raw,EncoderValues_t* Paras)
 
     if (deg < 0)
         deg += 360.0;
-
+    
+    if(Paras->direction == -1)
+    {
+        deg = 360.0 - deg;
+    } 
     return deg;
 }

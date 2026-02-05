@@ -38,7 +38,8 @@ typedef enum
     PROTO_CMD_RCVD,
     PROTO_CMD_IN_PROCESS,        
     PROTO_FORMAT_ERROR,
-    PROTO_CHKSM_ERROR
+    PROTO_CHKSM_ERROR,
+    PROTO_FRAME_TIMEOUT        
 }PROTO_STATUS;
 
 typedef struct
@@ -59,6 +60,7 @@ void Init_Protocol_stack_On_PNDNT();//This is used by RS422 for pendent
 //function Indicates End of Request 
 //this is to be Called from ISR at the time out of 2mSec after last bytes received
 void Protocol_Frame_done(Protocol_Info* Proto);
+
 
 //fucntion indicate that receiving of data is going on
 //This is to be called from ISR after each data byte is received
