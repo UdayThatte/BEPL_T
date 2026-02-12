@@ -135,7 +135,7 @@ void ETH_Port0_OnBlockReceived( uintptr_t context)
     else
     {
         IN_DAT_BUF = 0;
-        printf("\nETM Module Data Port Response %d",err);
+        printf("\nETH Module Data Received error %d",err);
         ETH_DAT_PORT_ReadAbort();
     }
     

@@ -18,29 +18,42 @@ extern "C" {
 #include "definitions.h"                // SYS function prototypes
     
 #define CAN_Base_Adress 0x600  
-#define CAN_Node_Encoder0 1
-#define CAN_Node_Encoder1 2
-#define CAN_Node_Encoder2 3
-#define CAN_Node_Amp0 11    
-#define CAN_Node_Amp1 12        
-#define CAN_Node_Amp2 13        
+#define CAN_Node_Encoder0 11 //1
+#define CAN_Node_Encoder1 12 //2
+#define CAN_Node_Encoder2 13//3
+#define CAN_Node_Amp0 1//11    
+#define CAN_Node_Amp1 2//12        
+#define CAN_Node_Amp2 3//13        
     
 #define CAN_Comm_ResponseTimeOut_In_mSec 1500//Saving parameter of encoder takes more time some times 1.2Sec !!
 typedef enum
 {
-    FIFO_Enco_0 = 1, //FIFO 0 is reserved for SDO send
-    FIFO_Enco_1,        
-    FIFO_Enco_2,                    
-    FIFO_Ampl_0 ,
+//    FIFO_Enco_0 = 1, //FIFO 0 is reserved for SDO send
+//    FIFO_Enco_1,        
+//    FIFO_Enco_2,                    
+//    FIFO_Ampl_0 ,
+//    FIFO_Ampl_1,
+//    FIFO_Ampl_2,
+//    FIFO_Send_RTR,  //FIFO 7 is reserved for NMT(RTR) send
+//    FIFO_RTR_Enco_0, //seperate FIFO is assigned because Mask for ID is different
+//    FIFO_RTR_Enco_1,            
+//    FIFO_RTR_Enco_2,            
+//    FIFO_RTR_Ampl_0 ,
+//    FIFO_RTR_Ampl_1,
+//    FIFO_RTR_Ampl_2,
+    FIFO_Ampl_0 = 1,
     FIFO_Ampl_1,
     FIFO_Ampl_2,
+    FIFO_Enco_0 , //FIFO 0 is reserved for SDO send
+    FIFO_Enco_1,        
+    FIFO_Enco_2,                    
     FIFO_Send_RTR,  //FIFO 7 is reserved for NMT(RTR) send
-    FIFO_RTR_Enco_0, //seperate FIFO is assigned because Mask for ID is different
-    FIFO_RTR_Enco_1,            
-    FIFO_RTR_Enco_2,            
     FIFO_RTR_Ampl_0 ,
     FIFO_RTR_Ampl_1,
     FIFO_RTR_Ampl_2,
+    FIFO_RTR_Enco_0, //seperate FIFO is assigned because Mask for ID is different
+    FIFO_RTR_Enco_1,            
+    FIFO_RTR_Enco_2,            
             
 }FIFO_No_for_Resp;
 

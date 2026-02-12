@@ -19,7 +19,7 @@ extern "C" {
 
 #include "Para_Calculations.h"
     
-#define PlsDly 15 //each count 125uS
+#define PlsDly 25 //~2uS for 25 --> 250KHz for 28bit 
 #define ST_Enc_NoofBits_ToRead_Bin 12
 #define ST_Enc_NoofBits_ToRead_Gray 13 //for Single turn gray 13 
 #define MT_Enc_NoofBits_ToRead 25 //for MultiTurn 25 bits Not yet tested for Multi Turn   

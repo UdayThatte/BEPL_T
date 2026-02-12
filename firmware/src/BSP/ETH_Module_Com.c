@@ -56,7 +56,10 @@ void Send_DATA_Str_to_ETH(uint8_t* SndStr,int NoOfChars)
 {
         while(XmtETHProgress)
         { _nop();}    //wait if previous data transfer is not complete  
+        TP1_Toggle();
         XmtETHProgress = true;
+        __builtin_disable_interrupts();
         ETH_DAT_PORT_Write(SndStr,NoOfChars);
+        __builtin_enable_interrupts();
 
 }
