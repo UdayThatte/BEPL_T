@@ -12,7 +12,7 @@ uint32_t GetSystemMs(void)
 
 }
 
-void e_delay(uint32_t dly)//125nS
+void e_delay(uint32_t dly)// ~75-100 nS per count  for 25 ~2US
 {
  volatile uint32_t k;   
     for(k=0;k<dly;k++)
