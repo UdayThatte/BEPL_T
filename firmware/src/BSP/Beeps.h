@@ -20,7 +20,7 @@ extern "C" {
 #include "toolchain_specifics.h" //for definition of WEAK
 //#include "definitions.h"                // SYS function prototypes
 
-
+//User can redefine this long and short beep is desired
 void __WEAK LongBeep();
 void __WEAK ShortBeep();
 

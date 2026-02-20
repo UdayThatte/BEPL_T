@@ -20,9 +20,9 @@ extern "C" {
 #include "Para_Calculations.h"
     
 #define PlsDly 25 //~2uS for 25 --> 250KHz for 28bit 
-#define ST_Enc_NoofBits_ToRead_Bin 12
-#define ST_Enc_NoofBits_ToRead_Gray 13 //for Single turn gray 13 
-#define MT_Enc_NoofBits_ToRead 25 //for MultiTurn 25 bits Not yet tested for Multi Turn   
+//#define ST_Enc_NoofBits_ToRead_Bin 12
+//#define ST_Enc_NoofBits_ToRead_Gray 13 //for Single turn gray 13 
+//#define MT_Enc_NoofBits_ToRead 25 //for MultiTurn 25 bits Not yet tested for Multi Turn   
 
 #define MAX_NO_OF_SSI_CHS 3    
     
@@ -35,20 +35,21 @@ extern "C" {
 #define Clear_Enco2_RST SPR6_Clear()    
 #define Set_Enco2_RST   SPR6_Set()    
     
-    
 
 //Returns Reading of Single Turn Encoder (13bit))
 //Value is valid if global variable  SSI_encode_Fault is not Set
 //Do not use value of SSI_encode_Fault = true
-uint32_t Get_SSI_Enco_Count_ST(uint8_t ChNo,bool IsitGrayCode);//ChNo 0,1,2 
+//uint32_t Get_SSI_Enco_Count_ST(uint8_t ChNo,bool IsitGrayCode);//ChNo 0,1,2 
 
 //Returns Reading of Multi Turn Encoder (24bit))
 //Value is valid if global variable  SSI_encode_Fault is not Set
 //Do not use value of SSI_encode_Fault = true
 
-uint32_t Get_SSI_Enco_Count_MT(uint8_t ChNo,bool IsitGrayCode);
+//uint32_t Get_SSI_Enco_Count_MT(uint8_t ChNo,bool IsitGrayCode);
 
 
+//Reads and returns SSI encoder count. It will handle both MT and ST both type of Encoders
+//EncoderParas_t to be set properly.    
 uint32_t Get_SSI_Encoder_Count(uint8_t ChNo,EncoderParas_t* Paras);
 void Reset_SSI_Enco(uint8_t ChNo);
 

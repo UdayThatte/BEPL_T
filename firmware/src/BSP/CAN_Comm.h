@@ -26,6 +26,17 @@ extern "C" {
 #define CAN_Node_Amp2 3//13        
     
 #define CAN_Comm_ResponseTimeOut_In_mSec 1500//Saving parameter of encoder takes more time some times 1.2Sec !!
+    
+//Following enum is used for defining FIFO for CAN comm
+//Depending upon the addresses of the Encoder /Amplifier 
+//it is to be defined
+//The commented section here was used for
+//Encoder with adr 0x601..0x603 and Amplifier 0x60b .. 0x60d
+//The uncommented section depicts
+//First amplifier addresses and then Encoder addresss
+//This structure can support 3 Amplifiers and 3 Encoders
+//SUGGESTED NOT TO CHANGE THE ADDRESS FOR EVERY PROJECT 
+//SUCH THAT THIS BSP FILE WILL BE USED FRO EVERY PROJECT    
 typedef enum
 {
 //    FIFO_Enco_0 = 1, //FIFO 0 is reserved for SDO send
@@ -57,6 +68,7 @@ typedef enum
             
 }FIFO_No_for_Resp;
 
+//Following two enums used for various SDO commands 
 typedef enum
 {
     CAN_Rd_Cmd = 0x40 ,
@@ -86,7 +98,8 @@ typedef enum
             
 }DataBits;
 
-    typedef enum
+//this enum is used for Can_Status in SDO
+typedef enum
 {
     STATE_CAN_IDLE,     //operational enums
     STATE_CAN_RECEIVE,
@@ -107,6 +120,7 @@ typedef enum
             //this Error when received is to be ignored and Operation should continue
 } CAN_APP_STATES;
 
+//This struct is used for Communication paras for SDO
 typedef struct
 {
   uint8_t NodeID;  //offset from Base ID 0x600
@@ -149,7 +163,7 @@ bool Read_CAN_Object(uint8_t Node,uint16_t ObjAdr,uint8_t SubIdx,DataBits NoofBi
 bool Write_CAN_Object(uint8_t Node,uint16_t ObjAdr,uint8_t SubIdx,DataBits NoofBits,uint32_t DataToWrite,FIFO_No_for_Resp fifonunm);
 
 //This function Not used for NOW
-//in SDO mode for every Query there is response so practically no FIFO is required
+//in SDO mode for every Query there is response so practically no messages are pending in FIFO is required
 //Pg28 of manual
 //"The object dictionary can be accessed with Service Data Objects (SDO).
 //This access is particularly easy and clear. 
