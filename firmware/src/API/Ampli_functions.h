@@ -27,7 +27,8 @@ typedef struct
     double Max_Positive;
     double Max_Negative;
     uint32_t AmplCountForOneRot;
-    double Max_Velocity;    //deg/sec 
+    bool IsVelocityinRPM; //else it is in deg/sec simillar for deccl accl
+    double Max_Velocity;    //deg/sec RPM depends upon Application
     double default_Velocity;
     double default_acc; //deg/sec2
 }Ampl_Paras;

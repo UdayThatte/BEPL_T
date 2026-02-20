@@ -210,9 +210,17 @@ bool Get_Amp_Error_if_Any(uint8_t AmplNode,uint32_t* ErrCode)
     return ret;
 }
 
-AmplComm_Status Set_Target_Velocity_Count(uint8_t AmplNode,uint32_t Vel)
+AmplComm_Status Set_Target_Velocity_Count_Velocity(uint8_t AmplNode,uint32_t Vel)
 {
-    if(! Write_CAN_Object(AmplNode,TARGET_VELOCITY,0x0,Data_32Bit,Vel,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+    if(! Write_CAN_Object(AmplNode,TARGET_VELOCITY_VEL,0x0,Data_32Bit,Vel,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+        return AMPL_CAN_COMM_ERR;
+    
+    return AMPL_STATE_OK;
+}
+
+AmplComm_Status Set_Target_Velocity_Count_Posi(uint8_t AmplNode,uint32_t Vel)
+{
+    if(! Write_CAN_Object(AmplNode,TARGET_VELOCITY_Posi,0x0,Data_32Bit,Vel,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
         return AMPL_CAN_COMM_ERR;
     
     return AMPL_STATE_OK;
@@ -376,22 +384,35 @@ AmplComm_Status Issue_Halt(uint8_t AmplNode)
 {
    uint32_t Ctlwrd,StatWrd;
    uint32_t timelapsed;
+
+   if(!Read_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&Ctlwrd))
+        return AMPL_CAN_COMM_ERR; //if comm error //return in communication 
+   Ctlwrd |= Amp_Halt_Operation;
    
-   if(!Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_Halt_Operation,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+   if(!Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Ctlwrd,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
      {
          AmplStatus = AMPL_CAN_COMM_ERR;
          return AMPL_CAN_COMM_ERR; 
      }
-    timelapsed = GetSystemMs();
-    do
-    {
-         if(!Read_CAN_Object(AmplNode,STATUS_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&StatWrd))
-            return AMPL_CAN_COMM_ERR;
-
-        AmplStatus = (uint16_t)StatWrd ;  
-        if((GetSystemMs() - timelapsed)>Timeout_Action_By_AmpInmSec)
+   
+   timelapsed = GetSystemMs();
+     while(Is_Motor_Moving(AmplNode))
+     {
+         delay_mS(2);
+        if((GetSystemMs() - timelapsed)>TimeoutFor_Halt_QuickStop) //fixed to 5 secs for halt/stop
             return AMPL_OPERATION_NOT_SUCCEEDED;
-    }while(!(StatWrd & Target_Reached_Mask)); //
+         
+     }
+//    timelapsed = GetSystemMs();
+//    do
+//    {
+//         if(!Read_CAN_Object(AmplNode,STATUS_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&StatWrd))
+//            return AMPL_CAN_COMM_ERR;
+//
+//        AmplStatus = (uint16_t)StatWrd ;  
+//        if((GetSystemMs() - timelapsed)>Timeout_Action_By_AmpInmSec)
+//            return AMPL_OPERATION_NOT_SUCCEEDED;
+//    }while(!(StatWrd & Target_Reached_Mask)); //
     
 //remove halt bit
          if(!Read_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&Ctlwrd))
@@ -407,9 +428,39 @@ AmplComm_Status Issue_Halt(uint8_t AmplNode)
 }
 bool Issue_Quick_Stop(uint8_t AmplNode)
 {
+   uint32_t Ctlwrd,StatWrd;
+   uint32_t timelapsed;
+
+   if(!Read_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&Ctlwrd))
+        return AMPL_CAN_COMM_ERR; //if comm error //return in communication 
+   Ctlwrd &= ~(Amp_QUICKSTOP); //reset the bit
+   
+   if(!Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Ctlwrd,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+     {
+         AmplStatus = AMPL_CAN_COMM_ERR;
+         return AMPL_CAN_COMM_ERR; 
+     }
+   
+   timelapsed = GetSystemMs();
+     while(Is_Motor_Moving(AmplNode))
+     {
+         delay_mS(2);
+        if((GetSystemMs() - timelapsed)>TimeoutFor_Halt_QuickStop) //fixed to 5 secs for halt/stop
+            return AMPL_OPERATION_NOT_SUCCEEDED;
+         
+     }
     
-   int32_t rdval;
-   return Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_QUICKSTOP,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0));
+//set back quick stop
+         if(!Read_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),&Ctlwrd))
+            return AMPL_CAN_COMM_ERR; //if comm error //return in communication 
+    
+        Ctlwrd |= Amp_QUICKSTOP;
+      if(! Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Ctlwrd,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
+         return AMPL_CAN_COMM_ERR;
+
+    
+    AmplStatus = AMPL_STATE_OK;
+    return AmplStatus;  
     
 }
 

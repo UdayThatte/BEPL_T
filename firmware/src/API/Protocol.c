@@ -117,6 +117,7 @@ void Send_Response_ETH()
 {
 
    Prepare_fb_string(); //from app_protocol
+
    Send_DATA_Str_to_ETH(ETH_OUT_Buffer,10);
    
    

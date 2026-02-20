@@ -24,7 +24,7 @@ extern "C" {
 //Ampl Control Word Bit Commands
 //it2..0    
 #define Amp_SHUT_DOWN 0x06 //but voltage not disabled???
-#define Amp_QUICKSTOP 0x02    //this frees the holding torqu
+#define Amp_QUICKSTOP 0x04    //bit 5 //to be cleared
 #define Amp_DISABLE_VOLTAGE 0x0    
 #define Amp_SWITCH_ON 0x07
 #define Amp_ENABLE_OPERATION 0x0f
@@ -52,6 +52,7 @@ extern "C" {
 #define Target_Reached_Mask     0x400 //Bit 10
 #define Timeout_Action_By_AmpInmSec 500    
 #define Timeout_Action_GO_AmpInmSec 200  //This depends upon Accelration Set bec checking is done on velocity      
+#define TimeoutFor_Halt_QuickStop  5000 //alow five secods to stop
 
 //Ampl Homing Methods Constants
 #define HOMING_NORUN      34// 34/35  Compatibility Issue TODO to be chekced sometimes it was working with 35
@@ -67,11 +68,16 @@ extern "C" {
 #define MODE_OF_OPERATION_DISPL 0x6061
 #define POSITION_ACTUAL_VALUE 0x6064
 #define VELOCITY_ACTUAL_VALUE 0x606c
-#define TARGET_VELOCITY 0x60ff
+
+#define TARGET_VELOCITY_VEL 0x60ff
+#define TARGET_VELOCITY_Posi 0x6081
+
+    
 #define TARGET_POSITION 0x607A   
 #define POLARITY 0x607E    
 #define TARGET_ACCELERATION 0x6083
 #define TARGET_DECELERATION 0x6084
+#define QUICKSTOP_DECELERATION 0x6085    
 #define HOMING_METHOD 0x6098    
 
 //This is Polarity of Position and Velocity By default Normal Polarity
@@ -133,7 +139,7 @@ bool GetOperationMode(uint8_t AmplNode,uint8_t* Stat);
 AmplComm_Status Set_Operating_Mode(uint8_t AmplNode,AmplOprMode mode);
 
 //Vel- Target Velocity in speed_units
-AmplComm_Status Set_Target_Velocity_Count(uint8_t AmplNode,uint32_t Vel);
+AmplComm_Status Set_Target_Velocity_Count_Velocity(uint8_t AmplNode,uint32_t Vel);
 
 //Pos - Position target in position unit
 //Isrelative - indicates if Target is relative to current or Absolute
