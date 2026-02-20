@@ -34,15 +34,34 @@ bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode,Ampl_Paras* Paras)
          if(stat != AMPL_STATE_OK) 
            return false;  
     }
-        send_cnt= Get_AZ_Count_Velocity(Paras->default_Velocity);
-        stat = Set_Target_Velocity_Count(AmplNode,send_cnt);
+  
+         
+        //send_cnt= Get_AZ_Count_Velocity(Paras->default_Velocity);
+        if(Paras->IsVelocityinRPM)
+            send_cnt= Get_Vel_Count_ForAmp_RPM(Paras->default_Velocity,Paras);
+        else
+            send_cnt= Get_Vel_Count_ForAmp_degSec(Paras->default_Velocity,Paras);
+        
+        if(mode == Ampl_POSITION_Mode)
+            stat = Set_Target_Velocity_Count_Posi(AmplNode,send_cnt);
+        else
+            stat = Set_Target_Velocity_Count_Velocity(AmplNode,send_cnt);
+        
           if(stat != AMPL_STATE_OK) 
             return false;
 
-        send_cnt=Get_AZ_Count_Accl_Deccl(Paras->default_Velocity);
+        //send_cnt=Get_AZ_Count_Accl_Deccl(Paras->default_Velocity);
+        if(Paras->IsVelocityinRPM)
+            send_cnt = Get_Count_Accl_Deccl_RPM(Paras->default_Velocity,Paras);
+        else
+            send_cnt = Get_Count_Accl_Deccl_deg(Paras->default_Velocity,Paras);
+        
         stat = Set_Target_Acceleration_Count(AmplNode,send_cnt);
               if(stat != AMPL_STATE_OK) 
                     return false;
+        stat = Set_Target_Deceleration_Count(AmplNode,send_cnt);
+      if(stat != AMPL_STATE_OK) 
+            return false;
 
   return true;
 }
@@ -63,7 +82,7 @@ bool Init_Amplifier_old(uint8_t AmplNode,AmplOprMode mode)
   switch (AmplNode)
   {
       case CAN_Node_Amp0:
-            //TODO calculations for the velocity to be performed here
+            //calculations for the velocity to be performed here
               if(AZ_motor_rotation_direction==1)
               {
                 stat = Set_Polarity_Of_Rotation(AmplNode,NORMAL_POLARITY);
@@ -78,7 +97,7 @@ bool Init_Amplifier_old(uint8_t AmplNode,AmplOprMode mode)
               }
               
               send_cnt= Get_AZ_Count_Velocity(AZ_default_Velocity);
-              stat = Set_Target_Velocity_Count(AmplNode,send_cnt);
+              stat = Set_Target_Velocity_Count_Posi(AmplNode,send_cnt);
                 if(stat != AMPL_STATE_OK) 
                   return false;
 
@@ -103,7 +122,7 @@ bool Init_Amplifier_old(uint8_t AmplNode,AmplOprMode mode)
                     }          
                     
                   send_cnt=Get_EL_Count_Velocity(EL_default_Velocity);
-                  stat = Set_Target_Velocity_Count(AmplNode,send_cnt);
+                  stat = Set_Target_Velocity_Count_Posi(AmplNode,send_cnt);
                       if(stat != AMPL_STATE_OK) 
                             return false;
 
