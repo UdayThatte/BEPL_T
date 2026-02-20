@@ -52,7 +52,7 @@ extern "C" {
 #define Target_Reached_Mask     0x400 //Bit 10
 #define Timeout_Action_By_AmpInmSec 500    
 #define Timeout_Action_GO_AmpInmSec 200  //This depends upon Accelration Set bec checking is done on velocity      
-#define TimeoutFor_Halt_QuickStop  5000 //alow five secods to stop
+#define TimeoutFor_Halt_QuickStop  5000 //alow five secods to stop when Halt is issued
 
 //Ampl Homing Methods Constants
 #define HOMING_NORUN      34// 34/35  Compatibility Issue TODO to be chekced sometimes it was working with 35
@@ -104,83 +104,95 @@ typedef enum
 //Pg170
 
 
-//returns status
-//CAN_state contains reason code
-AmplComm_Status Disable_Amplifier(uint8_t AmplNode);
-
-//returns true-success false-failed
-//CAN_state contains reason code
-//Posi - is updated for Position of Motor
-bool Get_Actual_Motor_Position(uint8_t AmplNode,int32_t* Posi);
-
-//returns true-success false-failed
-//CAN_state contains reason code
-//Stat - is updated for Status Word (if successful)
-bool GetAmplStatus(uint8_t AmplNode,uint16_t* Stat);
-
-//returns true-success false-failed
-//CAN_state contains reason code
-//if successful ErrCode is updated for the Latest Error code
-bool Get_Amp_Error_if_Any(uint8_t AmplNode,uint32_t* ErrCode);        
-
-
 //THIS APPLIES TO ALL FUNCTIONS RETURNING enum AmplComm_Status
 //return AMPL_STATE_OK is successful
 //if returned AMPL_CAN_COMM_ERR then CAN_state contains error code
 //if returned AMPL_OPERATION_NOT_SUCCEEDED then 
-//global vaiable AmplStatus contains the error response given by ampl
+//global variable AmplStatus contains the error response given by ampl (Status_Word))
 
 AmplComm_Status Enable_Amplifier(uint8_t AmplNode);
+//
+AmplComm_Status Disable_Amplifier(uint8_t AmplNode);
 
-//gets Curent mode of operation
+//returns true-success 
+//false-failed
+//CAN_state contains reason code if fails
+//Posi value valid only when successful
+bool Get_Actual_Motor_Position(uint8_t AmplNode,int32_t* Posi);
+
+//returns true-success 
+//false-failed
+//CAN_state contains reason code if fails
+//Stat - value is valid only when successful
+bool GetAmplStatus(uint8_t AmplNode,uint16_t* Stat);
+
+//returns true-success 
+//false-failed
+//CAN_state contains reason code if fails
+//gets Curent mode of operation in which it is
 bool GetOperationMode(uint8_t AmplNode,uint8_t* Stat);
 
+//return values as explained above
 //mode- as per enum AmplOprMode
 AmplComm_Status Set_Operating_Mode(uint8_t AmplNode,AmplOprMode mode);
 
-//Vel- Target Velocity in speed_units
+//returns true-success false-failed
+//CAN_state contains reason code if fails
+//if successful ErrCode is updated for the Latest Error code
+bool Get_Amp_Error_if_Any(uint8_t AmplNode,uint32_t* ErrCode);        
+
+//Vel- Target Velocity in speed_units for Velocity Mode
 AmplComm_Status Set_Target_Velocity_Count_Velocity(uint8_t AmplNode,uint32_t Vel);
+
+//Vel- Target Velocity in speed_units for Position Mode
+AmplComm_Status Set_Target_Velocity_Count_Posi(uint8_t AmplNode,uint32_t Vel);
 
 //Pos - Position target in position unit
 //Isrelative - indicates if Target is relative to current or Absolute
 AmplComm_Status Set_Target_Position_Count(uint8_t AmplNode,int32_t Pos,bool IsRelative);
 
-//Accl - Target Acceleration in Accl units
-AmplComm_Status Set_Target_Acceleration_Count(uint8_t AmplNode,uint32_t Accl);
-
-//Decl - Target Deceleration in Accl units
-AmplComm_Status Set_Target_Deceleration_Count(uint8_t AmplNode,uint32_t Decl);
-
 //ActImmediate - When set the Action will be taken immediately. Else the action to target will be taken
 //after first motion  is complete
 AmplComm_Status Issue_GO_Command(uint8_t AmplNode,bool ActImmediate);
 
-//Active Halt and waits for Target reached
-//Then resets the Halt bit
-AmplComm_Status Issue_Halt(uint8_t AmplNode);
-
-//activate Quick stop
-bool Issue_Quick_Stop(uint8_t AmplNode);
-
+//Reached - true or false for not reached
 //Check if Previous Target is reached 
 AmplComm_Status Check_if_Target_Reached(uint8_t AmplNode,bool* Reached);
 
-//Get actual speed of motor
-//used in Finding if motor is stopped completely in vel mode.
+//Decl - Target Deceleration in Accl units
+AmplComm_Status Set_Target_Deceleration_Count(uint8_t AmplNode,uint32_t Decl);
+
+//Accl - Target Acceleration in Accl units
+AmplComm_Status Set_Target_Acceleration_Count(uint8_t AmplNode,uint32_t Accl);
+
+//speed - Get actual speed of motor in speed uint
+//used in Finding if motor is stopped completely in vel mode. Better use  Is_Motor_Moving
 AmplComm_Status Get_ActualSpeed_Count_of_Motor(uint8_t AmplNode,uint32_t* speed);
 
-//true if moving
+//true if Motor is moving
+//returns false - if Not Moving
+//AmplStatus , CAN_state to be checked for No error 
 bool Is_Motor_Moving(uint8_t AmplNode);
+
+
+//Activate Halt and waits for Target reached
+//Then resets the Halt bit
+AmplComm_Status Issue_Halt(uint8_t AmplNode);
+//activate Quick stop
+bool Issue_Quick_Stop(uint8_t AmplNode);
+
+//Returns true ir false
+//if fails then Check CAN_Status
+bool Set_Homing_Method_To_NORUN(uint8_t AmplNode);
 
 //Gives bit4 of Control word a rising edge to start homing
 AmplComm_Status Command_For_Homing(uint8_t AmplNode);
 
-//
-bool Set_Homing_Method_To_NORUN(uint8_t AmplNode);
 
 //Direction of Rotation of Motor for All commands for Position /Velocity is decided with This obect
 //No Need to set it reverse unless required.
-//May be ion case StartBoard or Port side it will be required.
+//May be in case StartBoard or Port side it will be required.
+//Used in Init_amplifier to set direction as per Parameter for the amplifier
 AmplComm_Status Set_Polarity_Of_Rotation(uint8_t AmplNode,bool IsReverse);
 
 //Resets the fault status

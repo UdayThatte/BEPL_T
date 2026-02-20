@@ -93,9 +93,12 @@ uint32_t CAN_SDO_RESP_ERROR;//contain the Error code in case CAN_state is CAN_RC
 bool SSI_encode_Fault;
 
 //Amplifier related
-uint16_t AmplStatus; //Status received from ampl if it is requested by any function
+//Status received from ampl if it is requested by any function
 //this is to be checked by the calling function for exact nature of problem
 //to determine the cause Amplifier Status Word Definitions masks are to be used
+//When an operation returns AMPL_OPERATION_NOT_SUCCEEDED the this will contain the Status Word
+//to know the reason of rejection of operation
+uint16_t AmplStatus; 
 
 //** This may contain Control Word or any word which is read to take decision in some cases(Contextual))
 

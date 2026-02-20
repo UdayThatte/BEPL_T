@@ -52,21 +52,16 @@ typedef struct
 //returns true-Success false-failed
 //in case of failure CAN_state or AmplStatus contains the Error code
 //mode- is required mode of operation 
-//In case of Position mode,   Default Velocity and acceleration as defined here would be used
+//In case of Position mode,   Default Velocity and acceleration as defined would be used
 //for proper conversion GR (Gear Ration ) is used     
-bool Init_Amplifier_old(uint8_t AmplNode,AmplOprMode mode);
 bool Init_Amplifier(uint8_t AmplNode,AmplOprMode mode,Ampl_Paras* Paras);
 
-//returns true when Motion is complete
-//returns false - if failed due to CAN comm ot Ampl Error response
-//in case of failure CAN_state or AmplStatus contains the Error code
-//bool Wait_Till_Axis_Is_Moving(uint8_t AmplNode);
 
-//This would read the latest Error from Amplifier and Display the same 
+//This would read the latest Error in Amplifier and Display the same 
 //in user understandable strings, will also send it to Debug Port
 //The error code is returned
 //0 - No error
-//0xffff - No error code can be read )
+//0xffff - No error code can be read due to comm error )
 uint32_t Get_and_Display_Ampl_Error(uint8_t AmplNode,char* ErrorString,char* AmplName);
 
 //When Passed the Error code received from Amplifier this will

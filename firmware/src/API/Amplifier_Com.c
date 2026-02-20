@@ -90,7 +90,8 @@ if(!GetAmplStatus(AmplNode,&StatWrd))
    //*******************************      
   //printf("\r after switch on %04x",StatWrd);
    
-   if(!Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_ENABLE_OPERATION,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0))) return AMPL_CAN_COMM_ERR; //Enable
+   if(!Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_ENABLE_OPERATION,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0))) 
+       return AMPL_CAN_COMM_ERR; //Enable
    
        
    strttime = mSecCntr;
@@ -185,14 +186,12 @@ AmplComm_Status Set_Operating_Mode(uint8_t AmplNode,AmplOprMode mode)
     
 }
 
-//returns Error code if it is present (only 16 bits valid)
-//in case of CAN communication error CAN_state would be updated
-//Returns Zero in case of No error
 bool Get_Amp_Error_if_Any(uint8_t AmplNode,uint32_t* ErrCode)
 {
     bool ret;
     uint16_t StatWrd;
-    if(!GetAmplStatus(AmplNode,&StatWrd)) return false;
+    if(!GetAmplStatus(AmplNode,&StatWrd)) 
+        return false;
     
     if(( StatWrd & AMPL_FAULT) != AMPL_FAULT) 
     {
@@ -338,42 +337,32 @@ AmplComm_Status Set_Target_Deceleration_Count(uint8_t AmplNode,uint32_t Decl)
 {
     if(! Write_CAN_Object(AmplNode,TARGET_DECELERATION,0x0,Data_32Bit,Decl,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
          return AMPL_CAN_COMM_ERR;
-    
-    AmplStatus = AMPL_STATE_OK;
-    return AmplStatus;
+    return AMPL_STATE_OK;
 }
 
 AmplComm_Status Set_Target_Acceleration_Count(uint8_t AmplNode,uint32_t Accl)
 {
     if(! Write_CAN_Object(AmplNode,TARGET_ACCELERATION,0x0,Data_32Bit,Accl,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
          return AMPL_CAN_COMM_ERR;
-    
-    AmplStatus = AMPL_STATE_OK;
-    return AmplStatus;
+    return AMPL_STATE_OK;
 }
 
 
 AmplComm_Status Get_ActualSpeed_Count_of_Motor(uint8_t AmplNode,uint32_t* speed)
 {
-   bool ret;
    uint32_t Spd;
    
-    ret = Read_CAN_Object(AmplNode,VELOCITY_ACTUAL_VALUE,0x0,Data_32Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),speed);
-     if(!ret) 
-     {
-         AmplStatus = AMPL_CAN_COMM_ERR;
-         return AmplStatus; 
-     }
+    if(!Read_CAN_Object(AmplNode,VELOCITY_ACTUAL_VALUE,0x0,Data_32Bit,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0),speed))
+         return AMPL_CAN_COMM_ERR;
     
-    AmplStatus = AMPL_STATE_OK;
-    return AmplStatus;  
+    return AMPL_STATE_OK;
 }
 
 bool Is_Motor_Moving(uint8_t AmplNode)
 {
  int32_t Spd;    
  
-    Get_ActualSpeed_Count_of_Motor(AmplNode,(uint32_t*)&Spd);
+    AmplStatus = Get_ActualSpeed_Count_of_Motor(AmplNode,(uint32_t*)&Spd);
  
     if((Spd<-1)||(Spd>1)) return true;
     
@@ -400,7 +389,11 @@ AmplComm_Status Issue_Halt(uint8_t AmplNode)
      {
          delay_mS(2);
         if((GetSystemMs() - timelapsed)>TimeoutFor_Halt_QuickStop) //fixed to 5 secs for halt/stop
+        {
+            GetAmplStatus(AmplNode,&AmplStatus);
             return AMPL_OPERATION_NOT_SUCCEEDED;
+        }
+            
          
      }
 //    timelapsed = GetSystemMs();
@@ -519,14 +512,10 @@ AmplComm_Status Set_Polarity_Of_Rotation(uint8_t AmplNode,bool IsReverse)
     if(IsReverse) Pola = REVERSE_POLARITY;
  
     if(! Write_CAN_Object(AmplNode,POLARITY,0x0,Data_8Bit,Pola,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
-    {
-        AmplStatus = AMPL_CAN_COMM_ERR;
          return AMPL_CAN_COMM_ERR;
-    }
-        
-    
-    AmplStatus = AMPL_STATE_OK;
-    return AmplStatus;
+
+ 
+    return  AMPL_STATE_OK;
 }
 
 
@@ -548,5 +537,5 @@ AmplComm_Status Reset_Fault(uint8_t AmplNode)
     if(! Write_CAN_Object(AmplNode,CONTROL_WORD,0x0,Data_16Bit,Amp_SHUT_DOWN,FIFO_Ampl_0+(AmplNode - CAN_Node_Amp0)))
         return AMPL_CAN_COMM_ERR;
     
-    return AmplStatus;
+    return AMPL_STATE_OK;
 }
