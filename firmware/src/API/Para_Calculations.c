@@ -90,7 +90,8 @@ uint32_t Get_AZ_Count_Velocity(double Velocity)
 {
     if(Velocity > AZ_Max_Velocity) Velocity = AZ_Max_Velocity;
     
-    return (uint32_t)((Velocity * AZ_GR_motor_to_load)/6.0);//??
+    //return (uint32_t)((Velocity * AZ_GR_motor_to_load)/6.0);//??
+    return (uint32_t)((Velocity * AZ_GR_motor_to_load));//??
     
 }
 
@@ -98,7 +99,8 @@ uint32_t Get_AZ_Count_Accl_Deccl(double Accl)
 {
     if(Accl > AZ_default_acc) Accl = AZ_default_acc;
     
-    return (uint32_t)((Accl * AZ_GR_motor_to_load)/6.0);//??
+    //return (uint32_t)((Accl * AZ_GR_motor_to_load)/6.0);//??
+    return (uint32_t)((Accl * AZ_GR_motor_to_load));//??
     
 }
 
@@ -108,8 +110,8 @@ uint32_t Get_EL_Count_Velocity(double Velocity)
   //Our unit is deg/sec
     if(Velocity > EL_Max_Velocity) Velocity = EL_Max_Velocity;
     
-    return (uint32_t)((Velocity * EL_GR_motor_to_load)/6.0);//??
-    
+   // return (uint32_t)((Velocity * EL_GR_motor_to_load)/6.0);//??
+     return (uint32_t)((Velocity * EL_GR_motor_to_load)/6.0);//??
 }
 uint32_t Get_EL_Count_Accl_Deccl(double Accl)
 {
@@ -123,6 +125,17 @@ uint32_t Get_EL_Count_Accl_Deccl(double Accl)
 ///////////////////////////////----------------------------------
 ///////////////////////////////----------------------------------
 ///////////////////////////////----------------------------------
+uint32_t Get_Count_Accl_Deccl_deg(double Accl,Ampl_Paras* Paras)
+{
+   if(Accl > Paras->default_acc) Accl = Paras->default_acc;
+    return (uint32_t)((Accl * Paras->GR_motor_to_load)/6.0);//??
+}
+
+uint32_t Get_Count_Accl_Deccl_RPM(double Accl,Ampl_Paras* Paras)
+{
+   if(Accl > Paras->default_acc) Accl = Paras->default_acc;
+    return (uint32_t)((Accl * Paras->GR_motor_to_load));//??
+}
 
 uint32_t Get_Pos_Count_ForAmp(double difftogo,Ampl_Paras* Paras)
 {
