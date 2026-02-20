@@ -16,7 +16,8 @@ build/default/production/_ext/659820069/SSI_Enco.o: ../src/BSP/SSI_Enco.c \
  ../src/config/default/peripheral/adc/plib_adc.h \
  ../src/config/default/peripheral/spi/spi_master/plib_spi1_master.h \
  ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h \
- ../src/config/default/peripheral/uart/plib_uart5.h ../src/Utils/Utils.h
+ ../src/config/default/peripheral/uart/plib_uart5.h \
+ ../src/Para_Calculations.h ../src/Utils/Utils.h
 
 ../src/BSP/SSI_Enco.h:
 
@@ -55,5 +56,7 @@ build/default/production/_ext/659820069/SSI_Enco.o: ../src/BSP/SSI_Enco.c \
 ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h:
 
 ../src/config/default/peripheral/uart/plib_uart5.h:
+
+../src/Para_Calculations.h:
 
 ../src/Utils/Utils.h:

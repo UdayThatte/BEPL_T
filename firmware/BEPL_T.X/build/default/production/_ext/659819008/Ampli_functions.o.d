@@ -19,8 +19,8 @@ build/default/production/_ext/659819008/Ampli_functions.o: \
  ../src/config/default/peripheral/spi/spi_master/plib_spi_master_common.h \
  ../src/config/default/peripheral/uart/plib_uart5.h \
  ../src/API/Amplifier_Com.h ../src/BSP/CAN_Comm.h \
- ../src/System_Configuration.h ../src/API/CAN_Enco_Com.h \
- ../src/Utils/Utils.h ../src/Para_Calculations.h
+ ../src/System_Configuration.h ../src/BSP/CAN_Enco_Com.h \
+ ../src/Utils/Utils.h ../src/API/Para_Calculations.h
 
 ../src/API/Ampli_functions.h:
 
@@ -66,8 +66,8 @@ build/default/production/_ext/659819008/Ampli_functions.o: \
 
 ../src/System_Configuration.h:
 
-../src/API/CAN_Enco_Com.h:
+../src/BSP/CAN_Enco_Com.h:
 
 ../src/Utils/Utils.h:
 
-../src/Para_Calculations.h:
+../src/API/Para_Calculations.h:

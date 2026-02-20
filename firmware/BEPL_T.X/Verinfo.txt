@@ -1,0 +1,4 @@
+This Project is used as Base project for BSP/API 
+This was created for testing on BEPL board before our board was mfrd
+Now there might be errors cimpiling because of lot of changes
+Also COnfig for this project is different
