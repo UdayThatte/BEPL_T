@@ -1,5 +1,5 @@
-#ifndef __ETH_NETBURNER_H_
-#define __ETH_NETBURNER_H_
+#ifndef GYRO_PROCESS_H
+#define GYRO_PROCESS_H
 
 #ifdef	__cplusplus
 extern "C" {
@@ -13,14 +13,14 @@ extern "C" {
 #include "Board_Configuration.h"
 #include "Sys_Inits.h"
 
-//#include "HW_Testing.h"
-#include "Beeps.h"
-#include "Events.h"
 
-void Exit_ETH_From_AT_Mode();    
-void Put_ETH_In_AT_Mode();
-void Get_IP_ETH(char* IpStr);
-
+    
+void CommitFrame(uint8_t start);
+void GyroParserPush(uint8_t ByteRcvd);
+bool Get_Gyro_Data(uint8_t* RcvdData);
+void ParserReset();
+    
+    
 #ifdef	__cplusplus
 }
 #endif

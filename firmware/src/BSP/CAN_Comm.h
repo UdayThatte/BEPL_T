@@ -32,40 +32,27 @@ extern "C" {
 //it is to be defined
 //The commented section here was used for
 //Encoder with adr 0x601..0x603 and Amplifier 0x60b .. 0x60d
-//The uncommented section depicts
 //First amplifier addresses and then Encoder addresss
 //This structure can support 3 Amplifiers and 3 Encoders
 //SUGGESTED NOT TO CHANGE THE ADDRESS FOR EVERY PROJECT 
-//SUCH THAT THIS BSP FILE WILL BE USED FRO EVERY PROJECT    
+//SUCH THAT THIS BSP FILE WILL BE USED FOR EVERY PROJECT    
+//IF THIS ADDRESSING IS TO BE CHANGED FOR A PROJECT PL COPY THIS FILE TO <CUSTO> AREA  
+    
 typedef enum
 {
-//    FIFO_Enco_0 = 1, //FIFO 0 is reserved for SDO send
-//    FIFO_Enco_1,        
-//    FIFO_Enco_2,                    
-//    FIFO_Ampl_0 ,
-//    FIFO_Ampl_1,
-//    FIFO_Ampl_2,
-//    FIFO_Send_RTR,  //FIFO 7 is reserved for NMT(RTR) send
-//    FIFO_RTR_Enco_0, //seperate FIFO is assigned because Mask for ID is different
-//    FIFO_RTR_Enco_1,            
-//    FIFO_RTR_Enco_2,            
-//    FIFO_RTR_Ampl_0 ,
-//    FIFO_RTR_Ampl_1,
-//    FIFO_RTR_Ampl_2,
-    FIFO_Ampl_0 = 1,
-    FIFO_Ampl_1,
-    FIFO_Ampl_2,
-    FIFO_Enco_0 , //FIFO 0 is reserved for SDO send
+    FIFO_Enco_0 = 1, //FIFO 0 is reserved for SDO send
     FIFO_Enco_1,        
     FIFO_Enco_2,                    
+    FIFO_Ampl_0 ,
+    FIFO_Ampl_1,
+    FIFO_Ampl_2,
     FIFO_Send_RTR,  //FIFO 7 is reserved for NMT(RTR) send
-    FIFO_RTR_Ampl_0 ,
-    FIFO_RTR_Ampl_1,
-    FIFO_RTR_Ampl_2,
     FIFO_RTR_Enco_0, //seperate FIFO is assigned because Mask for ID is different
     FIFO_RTR_Enco_1,            
     FIFO_RTR_Enco_2,            
-            
+    FIFO_RTR_Ampl_0 ,
+    FIFO_RTR_Ampl_1,
+    FIFO_RTR_Ampl_2,
 }FIFO_No_for_Resp;
 
 //Following two enums used for various SDO commands 

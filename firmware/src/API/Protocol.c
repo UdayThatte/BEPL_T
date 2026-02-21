@@ -1,5 +1,5 @@
 #include "Protocol.h"
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
 #include "App_Protocol.h"
 
 extern uint32_t EL_Enco_Position; //CAN
@@ -19,6 +19,8 @@ extern uint8_t BIT_TX_BYTE;
 extern Protocol_Info ETH_Proto_Ptrs;
 extern Protocol_Info PNDNT_Proto_Ptrs;
 extern uint8_t FC_byte_in_feedback;
+
+
 //extern uint8_t Status_Byte1_in_feedback;
 
 void Init_Protocol_stack_On_ETH()
@@ -116,34 +118,39 @@ void Protocol_Chk(Protocol_Info* ProtoStruct)
 void Send_Response_ETH()
 {
 
-   Prepare_fb_string(); //from app_protocol
+   Prepare_fb_stringETH(); //customized
 
    Send_DATA_Str_to_ETH(ETH_OUT_Buffer,10);
    
    
 }
 
+
+
+
+#if (PNDNT_Proto_Implemented == true)    
+extern volatile bool XmtPNDNTProgress;
+void Send_DATA_Str_to_PNDNT(uint8_t* SndStr,int NoOfChars)
+{
+        while(XmtPNDNTProgress)
+        { _nop();}    //wait if previous data transfer is not complete  
+        //TP1_Toggle();
+        XmtPNDNTProgress = true;
+        __builtin_disable_interrupts();
+        PENDANT_PORT_Write(SndStr,NoOfChars);
+        __builtin_enable_interrupts();
+        
+
+}
+#endif
+
 void Send_Response_PNDNT()
 {
-//   uint8_t Response[10];
-//   uint8_t Chksm=0;
-// 
-//   PNDNT_OUT_Buffer[0] = Proto_SOF;
-//   PNDNT_OUT_Buffer[1] = 0x08;
-//   PNDNT_OUT_Buffer[2] = FC_byte_in_feedback;
-//   PNDNT_OUT_Buffer[3] = Response[4] = 0x7f;  //TODO Dummy value of 0x7f7f AZ feeddback
-//   PNDNT_OUT_Buffer[5] = Response[6] = 0x7f; //TODO Dummy value of 0x7f7f EL feeddback
-//   PNDNT_OUT_Buffer[7] = Status_Byte1_in_feedback;
-//   PNDNT_OUT_Buffer[8] = BIT_TX_BYTE;
-//   PNDNT_OUT_Buffer[9] = 0x0;//spare
-//   PNDNT_OUT_Buffer[11] = Proto_EOF;
-//   
-//    for(int n=1;n<10;n++)
-//        Chksm ^= PNDNT_OUT_Buffer[n];
-// 
-//    PNDNT_OUT_Buffer[8] = Chksm;
-  
-//TODO After configuring the Port for RS422 (pendent)   
-    //Send_DATA_Str_to_PNDNT(PNDNT_OUT_Buffer,12);
+#if (PNDNT_Proto_Implemented == true)        
+//TODO After configuring the Port for RS422 (pendent)       
+    Prepare_fb_stringPNDNT(); //customized
+    Send_DATA_Str_to_PNDNT(PNDNT_OUT_Buffer,10);
+#endif    
    
 }
+

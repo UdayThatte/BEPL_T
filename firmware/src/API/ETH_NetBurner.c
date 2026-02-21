@@ -4,7 +4,7 @@ extern char ETH_AT_Buffer[];
 extern uint8_t ETH_DAT_Buffer[];
 extern volatile int IN_DAT_BUF;
 extern volatile int IN_PNDNT_BUF;
-extern volatile bool rcvdATResp,rcvdETHCmd,XmtProgress;
+extern volatile bool rcvdATResp,XmtProgress;
 extern volatile int IN_AT_BUF;
 
 

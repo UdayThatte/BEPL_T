@@ -3,7 +3,7 @@
 #include "CAN_Enco_Com.h"
 #include "Utils.h"
 #include "Para_Calculations.h"
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
 
 extern uint16_t AmplStatus; 
 extern volatile CAN_APP_STATES CAN_state;

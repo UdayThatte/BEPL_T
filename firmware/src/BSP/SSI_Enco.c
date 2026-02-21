@@ -294,34 +294,34 @@ extern bool SSI_encode_Fault;
 //return u32bin;
 //} 
 //
-//void Reset_SSI_Enco(uint8_t ChNo)
-//{
-//       if(ChNo>MAX_NO_OF_SSI_CHS-1)
-//       {
-//           printf("\nInvalid SSI Channel Number to RESET- %d\n",ChNo);
-//           return ; //invalid channel numer
-//       }
-//       switch(ChNo)
-//       {
-//           case 0:
-//                Clear_Enco0_RST;
-//                delay_mS(250);//OCD-S101G-0012-C100-PRL manual
-//                Set_Enco0_RST;
-//                break;
-//           case 1:
-//                Clear_Enco1_RST;
-//                delay_mS(250);
-//                Set_Enco1_RST;
-//                break;
-//           case 2:
-//                Clear_Enco2_RST;
-//                delay_mS(250);
-//                Set_Enco2_RST;
-//                break;
-//
-//       }
-//
-//}
+void Reset_SSI_Enco(uint8_t ChNo)
+{
+       if(ChNo>MAX_NO_OF_SSI_CHS-1)
+       {
+           printf("\nInvalid SSI Channel Number to RESET- %d\n",ChNo);
+           return ; //invalid channel numer
+       }
+       switch(ChNo)
+       {
+           case 0:
+                Clear_Enco0_RST;
+                delay_mS(250);//OCD-S101G-0012-C100-PRL manual
+                Set_Enco0_RST;
+                break;
+           case 1:
+                Clear_Enco1_RST;
+                delay_mS(250);
+                Set_Enco1_RST;
+                break;
+           case 2:
+                Clear_Enco2_RST;
+                delay_mS(250);
+                Set_Enco2_RST;
+                break;
+
+       }
+
+}
 
 uint32_t Get_SSI_Encoder_Count(uint8_t ChNo,EncoderParas_t* Paras)
 {

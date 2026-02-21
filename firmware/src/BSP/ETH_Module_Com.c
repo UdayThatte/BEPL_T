@@ -1,12 +1,12 @@
 
 #include "ETH_Module_Com.h"
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
 #include "Utils.h"
 
 extern volatile int TmOut;
 extern volatile int IN_AT_BUF ;
 extern volatile bool XmtATProgress;
-extern volatile bool rcvdATResp,rcvdETHCmd,XmtETHProgress;
+extern volatile bool rcvdATResp,XmtETHProgress;
 extern char ATResponse[];
 extern char ETH_AT_Buffer[];
 extern char Com_Buffer1[];
@@ -56,7 +56,7 @@ void Send_DATA_Str_to_ETH(uint8_t* SndStr,int NoOfChars)
 {
         while(XmtETHProgress)
         { _nop();}    //wait if previous data transfer is not complete  
-        TP1_Toggle();
+        //TP1_Toggle();
         XmtETHProgress = true;
         __builtin_disable_interrupts();
         ETH_DAT_PORT_Write(SndStr,NoOfChars);

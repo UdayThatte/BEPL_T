@@ -5,7 +5,7 @@
  *      Author: myself
  */
 #include "KBD_5X8_rd.h"
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
 
 extern void CheckKey ();
 extern unsigned char KeyStatus [];

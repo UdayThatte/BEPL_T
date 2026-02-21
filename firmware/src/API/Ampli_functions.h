@@ -18,7 +18,7 @@ extern "C" {
 
 #include "Amplifier_Com.h"    
 #include "CAN_Comm.h"    
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
     
 typedef struct
 {

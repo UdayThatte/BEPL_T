@@ -1,11 +1,11 @@
 
 #include "Events.h"
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
 #include "CAN_Comm.h"
 #include "I2C_Comm.h"
 #include "Protocol.h"
 #include "KBD_5X8_rd.h"
-
+#include "Project_Configuration.h"
 
 
 
@@ -23,10 +23,12 @@ extern volatile CAN_APP_STATES CAN_state;
 extern char ATResponse[];
 extern char ETH_AT_Buffer[];
 extern uint8_t ETH_DAT_Buffer[];
+extern uint8_t PNDNT_DAT_Buffer[];
 
-extern volatile bool rcvdATResp,rcvdETHCmd,XmtETHProgress;
+extern volatile bool rcvdATResp,XmtETHProgress,XmtPNDNTProgress;
 extern volatile int IN_AT_BUF;
 extern volatile int IN_DAT_BUF;
+extern volatile int IN_PNDNT_BUF;
 
 extern volatile bool XmtATProgress  ;
 extern volatile uint8_t ETH_ByteRcvTimeOutCntr;
@@ -44,8 +46,8 @@ extern volatile uint16_t TINP_IMG;
 extern volatile uint16_t INP_IMG;
 extern volatile uint8_t INP_IMG1; 
 extern bool System_Booted;
-extern volatile int ETH_fb_Cntr;
-extern volatile bool Start_ETH_fb ;
+extern volatile int ETH_fb_Cntr,PNDNT_fb_Cntr;
+extern volatile bool Start_ETH_fb,Start_PNDNT_fb ;
 
 
 
@@ -53,6 +55,9 @@ extern volatile uint16_t lastStableState_INPIMG;
 extern volatile uint8_t lastStableState_INPIMG1;
 extern volatile uint8_t  debounceCount_INPIMG[]; // Counter per pin
 extern volatile uint8_t  debounceCount_INPIMG1[];
+
+extern volatile uint8_t GyroByte;
+
 void I2C2_I2cXferDone(uintptr_t context )
 {
     
@@ -114,8 +119,38 @@ void ETH_Port1_OnBlockSent( uintptr_t context)
 }
 
 
-extern void Process_ETH_Rcv();
-void ETH_Port0_OnBlockReceived( uintptr_t context)
+
+#if (Gyro_On_ETH == true)
+extern void GyroParserPush(uint8_t ByteRcvd);
+extern void ParserReset(void);
+void ETH_OnBlockReceived( uintptr_t context)
+{
+    
+    UART_ERROR err = ETH_DAT_PORT_ErrorGet();
+
+    if(UART_ERROR_NONE == err)
+    {
+         GyroParserPush(ETH_DAT_Buffer[0]);
+         ETH_ByteRcvTimeOutCntr = ByteRcvTimeOutInmSec; 
+    }
+    else
+    {
+        IN_DAT_BUF = 0;
+        printf("\nETH Module Data Received error %d",err);
+        ETH_DAT_PORT_ReadAbort();
+    }
+
+    /* prepare for next byte */
+    ETH_DAT_PORT_Read(&ETH_DAT_Buffer[IN_DAT_BUF],1); 
+   
+}
+void ETH_OnBlockSent( uintptr_t context)
+{
+    
+}
+#else
+
+void ETH_OnBlockReceived( uintptr_t context)
 {
      
     UART_ERROR err = ETH_DAT_PORT_ErrorGet();
@@ -141,11 +176,47 @@ void ETH_Port0_OnBlockReceived( uintptr_t context)
     
     ETH_DAT_PORT_Read(&ETH_DAT_Buffer[IN_DAT_BUF],1); 
 }
-
-void ETH_Port0_OnBlockSent( uintptr_t context)
+void ETH_OnBlockSent( uintptr_t context)
 {
     XmtETHProgress = false;
 }
+
+
+#endif
+
+void Pndnt_OnBlockReceived( uintptr_t context)
+{
+    UART_ERROR err = PENDANT_PORT_ErrorGet();
+    
+    
+    if(UART_ERROR_NONE == err)
+    {
+        if(Is_Proto_Running(&PNDNT_Proto_Ptrs)) //either not started or processing or error
+        {
+            IN_PNDNT_BUF++;   
+            Protocol_Receiving_stage(&PNDNT_Proto_Ptrs);//This function and Timeour is to be initialized after each byte received
+            PNDNT_ByteRcvTimeOutCntr = ByteRcvTimeOutInmSec; 
+        }
+        //else just ignore the byte
+        
+    }
+    else
+    {
+        IN_PNDNT_BUF = 0;
+        printf("\nETH Module Data Received error %d",err);
+        PENDANT_PORT_ReadAbort();
+    }
+    
+    PENDANT_PORT_Read(&PNDNT_DAT_Buffer[IN_PNDNT_BUF],1); 
+    
+}
+
+
+void Pndnt_OnBlockSent( uintptr_t context)
+{
+   XmtPNDNTProgress = false;
+}
+
 
 const uint8_t DEBOUNCE_THRESHOLD_INPIMG = 4;     // 4 * 10ms = 30ms
 const uint8_t DEBOUNCE_THRESHOLD_INPIMG1 = 4;
@@ -213,8 +284,14 @@ void Intr1Msec(uint32_t status, uintptr_t context)
     {
         ETH_ByteRcvTimeOutCntr--;
         if(!ETH_ByteRcvTimeOutCntr) //if timeout has occured
+#if (Gyro_On_ETH == false)            
             Protocol_Frame_done(&ETH_Proto_Ptrs);
+#else
+            ParserReset();
+#endif        
     }
+    
+    
     if(PNDNT_ByteRcvTimeOutCntr) 
     {
         PNDNT_ByteRcvTimeOutCntr--;
@@ -229,7 +306,15 @@ void Intr1Msec(uint32_t status, uintptr_t context)
         ETH_fb_Cntr = 0;
         if(Start_ETH_fb)
             Send_Response_ETH();
-    }    
+    }
+    
+    PNDNT_fb_Cntr++;
+    if(PNDNT_fb_Cntr >= PNDNT_Fb_Time_mSec)
+    {
+        PNDNT_fb_Cntr = 0;
+        if(Start_PNDNT_fb)
+            Send_Response_PNDNT();
+    }
     
     if(Dlycnt) Dlycnt--;//used by Delay routine
     if(TmOut) TmOut--; //used fro many routine

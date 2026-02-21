@@ -72,16 +72,15 @@ uint8_t ETH_OUT_Buffer[32];
 volatile int IN_PNDNT_BUF = 0;//No of Characters received through RS422 port (pendent))
 uint8_t PNDNT_DAT_Buffer[128];//RS422 Port connected to pendent.
 uint8_t PNDNT_OUT_Buffer[32];
-volatile bool Start_ETH_fb = false;
-volatile int ETH_fb_Cntr = 0;
-volatile bool rcvdATResp=false,rcvdETHCmd=false,XmtETHProgress=false;
+volatile bool Start_ETH_fb = false,Start_PNDNT_fb=0;
+volatile int ETH_fb_Cntr = 0,PNDNT_fb_Cntr=0;
+volatile bool rcvdATResp=false,XmtETHProgress=false,XmtPNDNTProgress=false;
+
 //rcvdATResp  true Received Complete response to AT command
-//rcvdETHCmd true Received Command on ETH port
-//this should be switched on after complete Protocol is received and Action should be taken based on this flag
 //XmtETHProgress - true Transmission to Data port of ETH module is in progress Cleared by interrupt
 volatile bool XmtATProgress = false;;//true - AT Command string to ETH is in progress  Cleared by interrupt
 
-
+volatile uint8_t GyroByte;
 
 
 //CAN related

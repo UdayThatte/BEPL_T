@@ -1,5 +1,5 @@
 #include "Sys_Inits.h"
-#include "System_Configuration.h"
+#include "Board_Configuration.h"
 #include "Events.h"
 #include "BoardTemp.h"
 #include "RTC_Comm.h"
@@ -9,6 +9,7 @@ extern unsigned int FlashSize;
 extern unsigned int FlashCap;
 extern volatile I2C_TRANSFER_STATUS transferStatus;
 extern volatile int IN_DAT_BUF;
+extern volatile int IN_PNDNT_BUF;
 extern char ETH_AT_Buffer[];
 extern uint8_t ETH_DAT_Buffer[];
 extern uint8_t I2C_Addrs[];
@@ -16,6 +17,7 @@ extern volatile int IN_DAT_BUF;
 extern volatile int IN_AT_BUF;
 extern volatile bool KeyBoardEnable;
 extern volatile bool InputReadEnable;
+extern uint8_t PNDNT_DAT_Buffer[];
 
 void PON_Inits()
 {
@@ -31,11 +33,20 @@ void PON_Inits()
     IN_AT_BUF = 0;
     ETH_AT_PORT_Read(&ETH_AT_Buffer[IN_AT_BUF],1);  //Prepare to receive data
     
-    //TCP Data Port initialization
-    ETH_DAT_PORT_ReadCallbackRegister(ETH_Port0_OnBlockReceived,(uintptr_t)NULL);
-    ETH_DAT_PORT_WriteCallbackRegister(ETH_Port0_OnBlockSent,(uintptr_t)NULL);
+    //TCP/UDP Data Port initialization for Protocol
+    ETH_DAT_PORT_ReadCallbackRegister(ETH_OnBlockReceived,(uintptr_t)NULL);
+    ETH_DAT_PORT_WriteCallbackRegister(ETH_OnBlockSent,(uintptr_t)NULL);
     ETH_DAT_PORT_Read(&ETH_DAT_Buffer[0],1);   //Prepare to receive data
     IN_DAT_BUF = 0;
+    
+//If pendant is to be used For this board Onlt One RS422 port is available
+//in UNI03 port0 or Port1 is available    
+#if (PNDNT_Proto_Implemented == true)    
+    PENDANT_PORT_ReadCallbackRegister(Pndnt_OnBlockReceived,(uintptr_t)NULL);
+    PENDANT_PORT_WriteCallbackRegister(Pndnt_OnBlockSent,(uintptr_t)NULL);
+    PENDANT_PORT_Read(&PNDNT_DAT_Buffer[0],1);   //Prepare to receive data
+    IN_PNDNT_BUF = 0;
+#endif
     
     //General Purpose Timer Init
     CORETIMER_CallbackSet (Intr1Msec, (uintptr_t)NULL );
