@@ -1,5 +1,6 @@
 #include "Sys_Inits.h"
 #include "Board_Configuration.h"
+#include "Project_Configuration.h"
 #include "Events.h"
 #include "BoardTemp.h"
 #include "RTC_Comm.h"

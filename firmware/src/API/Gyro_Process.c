@@ -1,5 +1,5 @@
 #include "Gyro_Process.h"
-#define FRAME_LEN 11
+#define FRAME_LEN 11 //change length for different protocol
 
 
 /* circular moving window */
@@ -40,7 +40,7 @@ void GyroParserPush(uint8_t ByteRcvd)
     }
 
     uint8_t start = widx;   // oldest byte in window
-
+//Here change SOF and EOF if different protocol is to be handled
     if(win[start] == 0x5A &&
        win[(start+1)%FRAME_LEN] == 0xA5 &&
        win[(start+9)%FRAME_LEN] == 0x0D &&
@@ -69,7 +69,7 @@ bool Get_Gyro_Data(uint8_t* RcvdData)
         return false;
 }
 
-void ParserReset()
+void Gyro_ParserReset()
 {
     widx   = 0;
     filled = 0;

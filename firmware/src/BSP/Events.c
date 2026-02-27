@@ -6,7 +6,7 @@
 #include "Protocol.h"
 #include "KBD_5X8_rd.h"
 #include "Project_Configuration.h"
-
+#include "Board_Configuration.h"
 
 
 extern uint16_t ADC_Spr1,ADC_Spr2;
@@ -45,7 +45,7 @@ extern volatile uint8_t TINP_IMG1;
 extern volatile uint16_t TINP_IMG;
 extern volatile uint16_t INP_IMG;
 extern volatile uint8_t INP_IMG1; 
-extern bool System_Booted;
+extern volatile bool System_Booted;
 extern volatile int ETH_fb_Cntr,PNDNT_fb_Cntr;
 extern volatile bool Start_ETH_fb,Start_PNDNT_fb ;
 
@@ -122,7 +122,7 @@ void ETH_Port1_OnBlockSent( uintptr_t context)
 
 #if (Gyro_On_ETH == true)
 extern void GyroParserPush(uint8_t ByteRcvd);
-extern void ParserReset(void);
+extern void Gyro_ParserReset(void);
 void ETH_OnBlockReceived( uintptr_t context)
 {
     
@@ -184,6 +184,7 @@ void ETH_OnBlockSent( uintptr_t context)
 
 #endif
 
+#if (PNDNT_Proto_Implemented == true)    
 void Pndnt_OnBlockReceived( uintptr_t context)
 {
     UART_ERROR err = PENDANT_PORT_ErrorGet();
@@ -216,7 +217,7 @@ void Pndnt_OnBlockSent( uintptr_t context)
 {
    XmtPNDNTProgress = false;
 }
-
+#endif
 
 const uint8_t DEBOUNCE_THRESHOLD_INPIMG = 4;     // 4 * 10ms = 30ms
 const uint8_t DEBOUNCE_THRESHOLD_INPIMG1 = 4;
@@ -287,7 +288,7 @@ void Intr1Msec(uint32_t status, uintptr_t context)
 #if (Gyro_On_ETH == false)            
             Protocol_Frame_done(&ETH_Proto_Ptrs);
 #else
-            ParserReset();
+            Gyro_ParserReset();
 #endif        
     }
     
@@ -299,6 +300,7 @@ void Intr1Msec(uint32_t status, uintptr_t context)
             Protocol_Frame_done(&PNDNT_Proto_Ptrs);
     }    
     
+#if (ETH_Proto_Implemented==true)     
     ETH_fb_Cntr++;
     
     if(ETH_fb_Cntr >= ETH_Fb_Time_mSec)
@@ -307,7 +309,9 @@ void Intr1Msec(uint32_t status, uintptr_t context)
         if(Start_ETH_fb)
             Send_Response_ETH();
     }
+#endif
     
+#if (PNDNT_Proto_Implemented == true)
     PNDNT_fb_Cntr++;
     if(PNDNT_fb_Cntr >= PNDNT_Fb_Time_mSec)
     {
@@ -315,7 +319,7 @@ void Intr1Msec(uint32_t status, uintptr_t context)
         if(Start_PNDNT_fb)
             Send_Response_PNDNT();
     }
-    
+#endif    
     if(Dlycnt) Dlycnt--;//used by Delay routine
     if(TmOut) TmOut--; //used fro many routine
     NoKeyTimeOut++;

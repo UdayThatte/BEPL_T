@@ -18,7 +18,7 @@ extern "C" {
 void CommitFrame(uint8_t start);
 void GyroParserPush(uint8_t ByteRcvd);
 bool Get_Gyro_Data(uint8_t* RcvdData);
-void ParserReset();
+void Gyro_ParserReset();
     
     
 #ifdef	__cplusplus

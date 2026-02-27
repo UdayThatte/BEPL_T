@@ -48,7 +48,7 @@ unsigned int AutoPageCnt;
 volatile I2C_TRANSFER_STATUS transferStatus = I2C_TRANSFER_STATUS_IDLE;
 
 //After successful Initialization and poweron wait is done This bit should be set
-bool System_Booted = false;
+volatile bool System_Booted = false;
 //Timer related
 volatile int32_t mSecCntr=0,Countfor1Sec=0,Cnt1Sec=0,Countfor10mSec=0,Count10mSec=0;
 volatile int32_t TmOut=0,Dlycnt=0;//TmOut Not to be used in User Programm
