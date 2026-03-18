@@ -333,13 +333,6 @@ void Intr1Msec(uint32_t status, uintptr_t context)
             KbdProcessInTimer();
         if(System_Booted)   
         {
-              //Update Outputs/Inputs Every 10mSec
-               GPIO_PortWrite(GPIO_PORT_G, 0xF000,(uint32_t)OUT_IMG << 8 );//OUT7,6,5,4
-               GPIO_PortWrite(GPIO_PORT_G, 0x0003,(uint32_t)OUT_IMG ); //OUT1,OUT0
-               GPIO_PortWrite(GPIO_PORT_A,0x0002,(uint32_t)OUT_IMG >> 1 );//OUT2 RA1
-               GPIO_PortWrite(GPIO_PORT_A,0x4000,(uint32_t)OUT_IMG << 11 );//OUT3 RA14
-
-               GPIO_PortWrite(GPIO_PORT_C, 0x000E,(uint32_t)BRK_IMG << 1 );//RC1..3 is BRK1..3
                if(InputReadEnable)
                {
                     EN_IN_HI_Clear();
@@ -353,10 +346,16 @@ void Intr1Msec(uint32_t status, uintptr_t context)
 #if (Keybaord_Used == false)        
            Debounce_INPIMG1();
 #endif
-
         }//process inp output if booted
         
           UserTimer10mSec();
+        //Update Outputs/Inputs Every 10mSec
+         GPIO_PortWrite(GPIO_PORT_G, 0xF000,(uint32_t)OUT_IMG << 8 );//OUT7,6,5,4
+         GPIO_PortWrite(GPIO_PORT_G, 0x0003,(uint32_t)OUT_IMG ); //OUT1,OUT0
+         GPIO_PortWrite(GPIO_PORT_A,0x0002,(uint32_t)OUT_IMG >> 1 );//OUT2 RA1
+         GPIO_PortWrite(GPIO_PORT_A,0x4000,(uint32_t)OUT_IMG << 11 );//OUT3 RA14
+         GPIO_PortWrite(GPIO_PORT_C, 0x000E,(uint32_t)BRK_IMG << 1 );//RC1..3 is BRK1..3
+          
     }//10 msec loop
     
     Countfor1Sec++;

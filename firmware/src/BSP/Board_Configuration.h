@@ -44,12 +44,12 @@ extern "C" {
 #define ETH_DAT_PORT_ReadCallbackRegister UART4_ReadCallbackRegister
 #define ETH_DAT_PORT_WriteCallbackRegister UART4_WriteCallbackRegister
 
-#define RS232_0_PORT_ErrorGet UART2_ErrorGet
-#define RS232_0_PORT_Read UART2_Read
-#define RS232_0_PORT_Write UART2_Write
-#define RS232_0_PORT_ReadAbort UART2_ReadAbort    
-#define RS232_0_PORT_ReadCallbackRegister UART2_ReadCallbackRegister
-#define RS232_0_PORT_WriteCallbackRegister UART2_WriteCallbackRegister
+#define RS232_0_PORT_ErrorGet UART1_ErrorGet
+#define RS232_0_PORT_Read UART1_Read
+#define RS232_0_PORT_Write UART1_Write
+#define RS232_0_PORT_ReadAbort UART1_ReadAbort    
+#define RS232_0_PORT_ReadCallbackRegister UART1_ReadCallbackRegister
+#define RS232_0_PORT_WriteCallbackRegister UART1_WriteCallbackRegister
 
     
 #ifdef UNI02    
