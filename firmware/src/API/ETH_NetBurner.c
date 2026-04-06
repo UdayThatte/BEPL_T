@@ -22,7 +22,7 @@ void Put_ETH_In_AT_Mode()
 {
     rcvdATResp = false;
     
-        if(!Send_AT_Cmd_To_ETH("+++","OK>",2500))   //manual mentions 2Sec wait
+        if(!Send_AT_Cmd_To_ETH("+++","OK>",3000))   //manual mentions 2Sec wait
         printf("\rNo Response to AT port..");
     else
         printf(ETH_AT_Buffer); //response received
@@ -33,7 +33,7 @@ void Get_IP_ETH(char* IpStr)
 {
    char *posi,*posi1;
    
-   if(Send_AT_Cmd_To_ETH("AT#CURIP?\r","OK>",1000)) //Current IP
+   if(Send_AT_Cmd_To_ETH("AT#CURIP?\r","OK>",2000)) //Current IP
     {
         posi = strchr(ETH_AT_Buffer,'?');
         posi++;

@@ -18,14 +18,14 @@ extern "C" {
 #include "definitions.h"                // SYS function prototypes
     
 #define CAN_Base_Adress 0x600  
-#define CAN_Node_Encoder0 11 //1
-#define CAN_Node_Encoder1 12 //2
-#define CAN_Node_Encoder2 13//3
-#define CAN_Node_Amp0 1//11    
-#define CAN_Node_Amp1 2//12        
-#define CAN_Node_Amp2 3//13        
+#define CAN_Node_Encoder0 1
+#define CAN_Node_Encoder1 2
+#define CAN_Node_Encoder2 3
+#define CAN_Node_Amp0 11    
+#define CAN_Node_Amp1 12        
+#define CAN_Node_Amp2 13        
     
-#define CAN_Comm_ResponseTimeOut_In_mSec 1500//Saving parameter of encoder takes more time some times 1.2Sec !!
+#define CAN_Comm_ResponseTimeOut_In_mSec 2000//Saving parameter of encoder takes more time some times 1.2Sec !!
     
 //Following enum is used for defining FIFO for CAN comm
 //Depending upon the addresses of the Encoder /Amplifier 

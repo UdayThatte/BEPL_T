@@ -2,6 +2,7 @@
 #include "CAN_Enco_Com.h"
 #include "Events.h"
 #include "CAN_Comm.h"
+#include "Utils.h"
 
 extern volatile CAN_APP_STATES CAN_state;
 extern volatile int TmOut;
@@ -21,11 +22,51 @@ bool Set_Zero_For_Enco_CAN(uint8_t EncoNode)
 
 //saves the parameters
 bool Save_Parameters_To_CAN_Enco(uint8_t EncoNode)
-//Sub Index 01 is to be used for Saving the para
+//Sub Index 00 is to be used for Saving the para
 {
     
-    //0x55AA55AA Pg41 manual
-    return Write_CAN_Object(EncoNode,SAVE_PARA,0,Data_32Bit,0x55aaaa55,FIFO_Enco_0+(EncoNode - CAN_Node_Encoder0));
+    //0x55AAAA55 Pg41 manual
+    //return Write_CAN_Object(EncoNode,SAVE_PARA,0,Data_32Bit,0x55aaaa55,FIFO_RTR_Enco_0+(EncoNode - CAN_Node_Encoder0));
+    
+    int32_t RetVal;
+    CAN_Tx_Rx_Block blk;
+    uint8_t TxCmd[] = {0x0,(SAVE_PARA & 0xff),(SAVE_PARA>>8)&0xff,0,
+                        (0x55AAAA55 & 0xff),
+                        ((0x55AAAA55>>8) & 0xff),
+                        ((0x55AAAA55>>16) & 0xff),
+                        ((0x55AAAA55>>24) & 0xff),
+                        }; 
+    uint8_t RxMsg[2];//No std response  = {(ObjAdr & 0xff),(ObjAdr>>8)&0xff,SubIdx};
+    
+   //Write command depends upon no of bits in the Data to write 
+        TxCmd[0] = CAN_Wr_Cmd_32Bit;
+        blk.CmdLength = 4 + 4; 
+        
+    blk.NodeID = EncoNode;   //first Amplifier
+    blk.CmdToSnd = TxCmd;
+    blk.Exp_resp_seq = RxMsg; //usually the DeviceObject Adress and Sub Index
+    blk.ExpLengthOfRxMsg = 0;// No std resp
+    blk.Exp_resp_token = 0;//Not used here
+    //blk.NoOfBits = NoofBits; //there is no response as data so this is Not applicable 
+    blk.FifoNum = FIFO_RTR_Enco_0+(EncoNode - CAN_Node_Encoder0) ;
+    //blk.ResponseTimeoutmSec = CAN_Comm_ResponseTimeOut_In_mSec;//immaterial
+    
+    if(!CAN_SDO_Operation(&blk)) return false; 
+        //return value has no meaning
+    //return true;
+    
+    blk.NodeID = EncoNode;   
+    blk.CmdToSnd = TxCmd;//no command is to be send
+    blk.CmdLength = 0;
+    blk.ExpLengthOfRxMsg = 1;
+    
+   // blk.FifoNum = fifonunm ;
+    blk.ResponseTimeoutmSec= 5000;//Some times bootup may require more time and if not confirmed then next read command fails
+
+    if(!CAN_RTR_Operation(&blk,false))
+            return false;
+    //*(ReadValueptr) = blk.RegValue;
+    return true;
 }
 
 
@@ -47,7 +88,7 @@ bool Send_Start_NMT(uint8_t EncoNode,uint32_t* ReadValueptr)
     blk.ExpLengthOfRxMsg = 1;
     
    // blk.FifoNum = fifonunm ;
-    blk.ResponseTimeoutmSec= 2000;//
+    blk.ResponseTimeoutmSec= CAN_Comm_ResponseTimeOut_In_mSec;//
     if(!CAN_RTR_Operation(&blk,true))
             return false;
     *(ReadValueptr) = blk.RegValue;
@@ -68,7 +109,7 @@ bool Send_Preop_NMT(uint8_t EncoNode,uint32_t* ReadValueptr)
     blk.ExpLengthOfRxMsg = 1;
     
    // blk.FifoNum = fifonunm ;
-    blk.ResponseTimeoutmSec= 2000;//
+    blk.ResponseTimeoutmSec= CAN_Comm_ResponseTimeOut_In_mSec;//
     if(!CAN_RTR_Operation(&blk,true))
             return false;
     *(ReadValueptr) = blk.RegValue;
@@ -87,38 +128,38 @@ uint32_t Enco;
             
         else
         {
-            //printf("\rSetting Successful..\r\r");                
-
             if(!Save_Parameters_To_CAN_Enco(EncodeNode))
             {
                 printf("\rSaving CAN Para Failed..");                
                 LongBeep();
             }
-                
             else
             {
-                //printf("\rSaving Successful..\r\r");                
+                printf("\rSaving Successful..\r\r");                
+            }    
+            //This Process takes roughly 1.2 Sec /sometimes 4-5 seconds also
+           //Giving Delay does not solve this because the next command
+           //issued would get the NMT message 0x701 which leads to error in SDO operation
 
-
-            ///***************************************
-                printf("\rWaiting for BootUp..\r\r");                
-                do
-                {
-                if(Send_Start_NMT(EncodeNode,&Enco))    
-                  printf("\r%08X",Enco);
-                else
-                   Enco=0xffff;
-
-                delay_mS(1000);
-                }while((Enco & 0xff)!=0x0);//Bootup Message 0x0
-
-
-                ShortBeep();
-              //This Process takes roughly 1.2 Sec /sometimes 4-5 seconds also
-             //Giving Delay does not solve this because the next command
-             //issued would get the NMT message 0x701 which leads to error in SDO operation
-           ///***************************************
-           }
-        }    
+        }
+            
+//with special Save routine this process would not be required 
+//            ///***************************************
+//                printf("\rWaiting for BootUp..\r\r");                
+//                do
+//                {
+//                if(Send_Start_NMT(EncodeNode,&Enco))    
+//                  printf("\r%08X",Enco);
+//                else
+//                   Enco=0xffff;
+//
+//                delay_mS(1000);
+//                }while((Enco & 0xff)!=0x0);//Bootup Message 0x0
+//
+//
+//                ShortBeep();
+//           ///***************************************
+//           }
+//        }    
 
 }

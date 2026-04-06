@@ -41,7 +41,7 @@ void PON_Inits()
     IN_DAT_BUF = 0;
     
 //If pendant is to be used For this board Onlt One RS422 port is available
-//in UNI03 port0 or Port1 is available    
+//in UNI06 port0 or Port1 is available    
 #if (PNDNT_Proto_Implemented == true)    
     PENDANT_PORT_ReadCallbackRegister(Pndnt_OnBlockReceived,(uintptr_t)NULL);
     PENDANT_PORT_WriteCallbackRegister(Pndnt_OnBlockSent,(uintptr_t)NULL);
@@ -69,7 +69,7 @@ void PON_Inits()
 
     KeyBoardEnable = true;
     InputReadEnable = true;
-
+    
 }
 
 

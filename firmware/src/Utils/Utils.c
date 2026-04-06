@@ -31,8 +31,8 @@ void delay_mS(int Interval)
 uint8_t Read_stdin_if_ready()
 {
     uint8_t c =0x0;
-    if(UART1_ReceiverIsReady())  // if char is available
-        c =(uint8_t) UART1_ReadByte();    
+    if(UART2_ReceiverIsReady())  // if char is available
+        c =(uint8_t) UART2_ReadByte();    
     return c;
 }
 

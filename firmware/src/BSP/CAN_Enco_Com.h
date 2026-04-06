@@ -39,7 +39,7 @@ bool Get_Enco_Count_CAN(uint8_t EncoNode,uint32_t* CntPtr);
 //true- when successful
 bool Set_Zero_For_Enco_CAN(uint8_t EncoNode);
 
-//Saves the Homing position
+//Saves the Homing position Or any other data in future
 //Using Obj 0x2300 wit Magic word 0x55aaaa55
 //return false- if failed CAN_stat contains the reason code
 //true- when successful

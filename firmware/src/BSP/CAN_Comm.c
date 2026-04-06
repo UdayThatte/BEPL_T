@@ -119,9 +119,9 @@ bool Write_CAN_Object(uint8_t Node,uint16_t ObjAdr,uint8_t SubIdx,DataBits NoofB
         
     blk.NodeID = Node;   //first Amplifier
     blk.CmdToSnd = TxCmd;
-    blk. Exp_resp_seq = RxMsg; //usually the DeviceObject Adress and Sub Index
+    blk.Exp_resp_seq = RxMsg; //usually the DeviceObject Adress and Sub Index
     blk.ExpLengthOfRxMsg = 8;// always returns 8 bytes irrespective of requested bytes only requeste no of bytes are valid)
-     blk.Exp_resp_token = Write_RespToken;
+    blk.Exp_resp_token = Write_RespToken;
     blk.NoOfBits = NoofBits; //there is no response as data so this is Not applicable 
     blk.FifoNum = fifonunm ;
     blk.ResponseTimeoutmSec = CAN_Comm_ResponseTimeOut_In_mSec;
@@ -158,7 +158,7 @@ bool Read_CAN_Object(uint8_t Node,uint16_t ObjAdr,uint8_t SubIdx,DataBits NoofBi
     blk.CmdToSnd = TxCmd;
     blk.CmdLength = 4; //Fixed for Read Command
     //blk.Exp_resp_token = Read_RespToken_16Bit ;
-    blk. Exp_resp_seq = RxMsg; //usually the DeviceObject Adress and Sub Index
+    blk.Exp_resp_seq = RxMsg; //usually the DeviceObject Adress and Sub Index
     blk.ExpLengthOfRxMsg = 8;// always returns 8 bytes irrespective of requested bytes only requeste no of bytes are valid)
     blk.NoOfBits = NoofBits; //1-8 bit 2-16 bit 3-24bit 4-32 bit for valid value
     blk.FifoNum = fifonunm ;
@@ -210,7 +210,7 @@ bool CAN_SDO_Operation(CAN_Tx_Rx_Block* CanMsg)
         CAN_state = STATE_CAN_IDLE;
 
     if(CanMsg->ExpLengthOfRxMsg == 0) 
-        return false;
+        return true; //do not wait for response here
         
     CAN1_CallbackRegister(CAN_InterruptHandler,(uintptr_t)STATE_CAN_RECEIVE,CanMsg->FifoNum); //prepare for Receive response
     CAN1_MessageReceive(&CAN_rx_messageID, &CAN_rxMsgLength, CAN_Msg, &timestamp,(uint8_t)CanMsg->FifoNum, &msgAttr);    

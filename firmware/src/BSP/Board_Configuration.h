@@ -21,14 +21,14 @@ extern "C" {
 //UART1 is used for Debug across all models
 //For this Hardware UNI02 U6 is not used 
 
-#ifndef UNI02 
-    #ifndef UNI03
+#ifndef UNI05 
+    #ifndef UNI06
         #error "BASE BOARD MUST BE DEFINED IN Project_configuration.h"
     #endif     
 #endif
     
 //DO NOT MODIFY FOLLOWING DEFINITIONS 
-//AS THESE ARE DEPENDANT ON HW UNI02  PCB  
+//AS THESE ARE DEPENDANT ON HW UNI05  PCB  
     
 #define ETH_AT_PORT_ErrorGet UART3_ErrorGet
 #define ETH_AT_PORT_Read UART3_Read
@@ -52,7 +52,7 @@ extern "C" {
 #define RS232_0_PORT_WriteCallbackRegister UART1_WriteCallbackRegister
 
     
-#ifdef UNI02    
+#ifdef UNI05    
 
  #if (PNDNT_Proto_Implemented == true)    
 #define PENDANT_PORT_ErrorGet UART5_ErrorGet
@@ -77,7 +77,7 @@ extern "C" {
 
     
 /////////////////////////////////////////////////////////////////////////
-#ifdef UNI03    
+#ifdef UNI06    
 
 #if (PNDNT_Proto_Implemented == true)
     
@@ -135,7 +135,7 @@ extern "C" {
     
 #endif //  PNDNT_Proto_Implemented      
     
-#endif //if uni03
+#endif //if uni06
     
 #ifdef	__cplusplus
 }
