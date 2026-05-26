@@ -1,7 +1,7 @@
 
 #include "Para_Calculations.h"
 #include "Ampli_functions.h"
-
+#include <math.h>
 
 
 void Get_Paras_12Bit_Encoders(uint32_t EncoReading,double* angle,uint16_t GearRatio) 
@@ -108,5 +108,41 @@ double Encoder_ComputeAbsLoadAngle(uint32_t raw,EncoderParas_t* Paras)
     {
         deg = 360.0 - deg;
     } 
+    return deg;
+}
+
+
+//new to check 080426
+double Encoder_ComputeAbsLoadAngle1(uint32_t raw, EncoderParas_t* Paras)
+{
+    uint32_t revMask = (1UL << Paras->revBits) - 1;
+    uint32_t angMask = (1UL << Paras->angBits) - 1;
+
+    uint32_t encRev = (raw >> Paras->angBits) & revMask;
+    uint32_t encAng = raw & angMask;
+
+    int32_t signedRev;
+
+    if (encRev <= (revMask >> 1))
+        signedRev = encRev;
+    else
+        signedRev = (int32_t)encRev - (int32_t)(revMask + 1);
+
+    /* total linear position */
+    double totalCounts =
+        ((double)signedRev * (1UL << Paras->angBits)) + encAng;
+
+    /* scale to 0?360 using gear ratio */
+    double deg = totalCounts *
+        (360.0 / ((1UL << Paras->angBits) * Paras->gearRatio));
+
+    /* wrap to 0?360 */
+    deg = fmod(deg, 360.0);
+    if (deg < 0)
+        deg += 360.0;
+
+    if (Paras->direction == -1)
+        deg = 360.0 - deg;
+
     return deg;
 }

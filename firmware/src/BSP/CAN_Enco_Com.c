@@ -135,7 +135,10 @@ uint32_t Enco;
             }
             else
             {
-                printf("\rSaving Successful..\r\r");                
+                if(!Send_Preop_NMT(EncodeNode,&Enco))
+                    printf("\rEnco Preop Failed..");                
+                else
+                    printf("\rSaving Successful..\r\r");                
             }    
             //This Process takes roughly 1.2 Sec /sometimes 4-5 seconds also
            //Giving Delay does not solve this because the next command
